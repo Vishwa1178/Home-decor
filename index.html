@@ -1,0 +1,451 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description" content="Book home decoration packages for birthdays, anniversaries, baby showers, house warming, engagements and festivals." />
+    <meta name="theme-color" content="#f53168" />
+    <title>Decor My Space | Home Decor</title>
+    <script>
+      if (location.pathname === "/admin" || location.hash === "#admin") {
+        document.documentElement.classList.add("admin-path");
+      }
+    </script>
+    <style>
+      html.admin-path #publicNav,
+      html.admin-path #publicActions,
+      html.admin-path .footer,
+      html.admin-path .mobile-cta {
+        display: none !important;
+      }
+      html.admin-path .topbar { justify-content: space-between; }
+      html.admin-path .site-shell { min-height: calc(100vh - 20px); }
+
+      .admin-topbar-logout { display: none; align-items: center; gap: 12px; }
+      .admin-route .admin-topbar-logout { display: flex; }
+      .admin-route #publicActions,
+      .admin-route #publicNav { display: none !important; }
+
+      /* ── Admin Login Overlay ── */
+      #adminLoginOverlay {
+        position: fixed; inset: 0; z-index: 9999;
+        display: none; align-items: center; justify-content: center;
+        background:
+          linear-gradient(135deg, rgba(245,49,104,0.07) 0%, rgba(255,255,255,0.95) 60%),
+          url("https://images.unsplash.com/photo-1600210491369-e753d80a41f3?auto=format&fit=crop&w=1600&q=80") center/cover;
+        backdrop-filter: blur(3px);
+      }
+      #adminLoginOverlay.visible { display: flex; }
+
+      .admin-login-card {
+        width: min(440px, calc(100vw - 32px));
+        padding: 44px 40px 36px;
+        border: 1px solid #f2d8d8;
+        border-radius: 18px;
+        background: #fff;
+        box-shadow: 0 28px 64px rgba(34,20,25,0.18);
+        text-align: center;
+      }
+      .admin-login-card .alc-logo {
+        display: inline-grid; place-items: center;
+        width: 54px; height: 54px;
+        color: #f53168; border: 2.5px solid #f53168;
+        border-radius: 16px; font-size: 17px; font-weight: 900;
+        margin-bottom: 18px;
+      }
+      .admin-login-card h1 {
+        margin: 0 0 4px;
+        font-family: "Playfair Display", serif;
+        font-size: 32px; color: #121521;
+      }
+      .admin-login-card .alc-sub {
+        color: #686a75; font-size: 13px; font-weight: 600; margin: 0 0 28px;
+      }
+      /* form fields */
+      .alc-field {
+        display: flex; flex-direction: column; gap: 5px;
+        text-align: left; margin-bottom: 14px;
+      }
+      .alc-field label {
+        font-size: 12px; font-weight: 800; color: #686a75; text-transform: uppercase; letter-spacing: .6px;
+      }
+      .alc-field input {
+        height: 46px; padding: 0 14px;
+        border: 1.5px solid #f2d8d8; border-radius: 8px;
+        font-size: 14px; font-family: inherit; outline: none;
+        transition: border-color 160ms;
+      }
+      .alc-field input:focus { border-color: #f53168; }
+      .alc-login-btn {
+        width: 100%; height: 48px; margin-top: 6px;
+        background: #f53168; color: #fff;
+        border: none; border-radius: 8px;
+        font-size: 15px; font-weight: 800; font-family: inherit;
+        cursor: pointer; transition: background 160ms, transform 160ms;
+        box-shadow: 0 10px 24px rgba(245,49,104,0.22);
+      }
+      .alc-login-btn:hover { background: #d91f52; transform: translateY(-1px); }
+      .alc-login-btn:disabled { opacity: .7; cursor: wait; transform: none; }
+      .alc-status {
+        margin: 14px 0 0; min-height: 20px;
+        color: #d91f52; font-size: 13px; font-weight: 700;
+      }
+      .alc-status.success { color: #0f6b37; }
+      .alc-footer-note {
+        margin: 20px 0 0; padding-top: 18px;
+        border-top: 1px solid #f2d8d8;
+        color: #a0a3ad; font-size: 12px;
+      }
+      /* credential hint box */
+      .alc-hint {
+        margin: 0 0 18px;
+        padding: 10px 14px;
+        background: #fff8e7; border: 1px solid #ffd28a;
+        border-radius: 8px; text-align: left; font-size: 12px;
+        color: #7b4300; line-height: 1.6;
+      }
+      .alc-hint strong { display: block; margin-bottom: 2px; font-size: 11px; text-transform: uppercase; letter-spacing: .5px; }
+    </style>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Great+Vibes&family=Inter:wght@400;500;600;700;800&family=Playfair+Display:wght@700;800&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="./styles.css" />
+  </head>
+  <body>
+
+    <!-- ── Admin Login Overlay ── -->
+    <div id="adminLoginOverlay" role="dialog" aria-modal="true" aria-label="Admin Login">
+      <div class="admin-login-card">
+        <div class="alc-logo">DM</div>
+        <h1>Admin Login</h1>
+        <p class="alc-sub">Enter your credentials to access the dashboard</p>
+
+        <div class="alc-field">
+          <label for="adminEmailInput">Email</label>
+          <input type="email" id="adminEmailInput" placeholder="admin@example.com" autocomplete="username" />
+        </div>
+        <div class="alc-field">
+          <label for="adminPasswordInput">Password</label>
+          <input type="password" id="adminPasswordInput" placeholder="••••••••" autocomplete="current-password" />
+        </div>
+        <button class="alc-login-btn" id="adminLoginBtn" type="button">Login</button>
+        <p class="alc-status" id="adminLoginStatus" role="status"></p>
+        <p class="alc-footer-note">Access restricted to authorised admin only.</p>
+      </div>
+    </div>
+
+    <div class="site-shell">
+      <header class="topbar" id="siteHeader">
+        <a class="brand" href="/" data-route="/">
+          <span class="brand-mark">DM</span>
+          <span>
+            <strong>Decor My Space</strong>
+            <small>HOME DECOR</small>
+          </span>
+        </a>
+        <nav class="nav-links" id="publicNav" aria-label="Primary">
+          <a href="/" data-route="/" class="active">Home</a>
+          <a href="#decorations">Decorations</a>
+          <a href="#themes">Themes</a>
+          <a href="#packages">Packages</a>
+          <a href="#gallery">Gallery</a>
+          <a href="#reviews">Reviews</a>
+          <a href="#about">About Us</a>
+        </nav>
+        <div class="top-actions" id="publicActions">
+          <button class="pill-button" type="button" data-open-booking data-package="Birthday Decoration" data-price="999">Book Now</button>
+          <a class="call-button" href="tel:+919876543210" aria-label="Call Decor My Space">Call</a>
+        </div>
+        <!-- Admin topbar: email + logout (visible only after login) -->
+        <div class="admin-topbar-logout" id="adminTopbarArea">
+          <span id="adminTopbarEmail" style="font-size:13px;font-weight:700;color:#686a75;"></span>
+          <button class="secondary-button" id="adminLogout" type="button" style="min-height:40px;padding:0 20px;font-size:13px;">Logout</button>
+        </div>
+      </header>
+
+      <main id="app">
+        <!-- ══ HOME PAGE ══ -->
+        <section class="page page-home active" data-page="home">
+          <section class="hero">
+            <div class="hero-copy">
+              <span class="eyebrow">Premium home decoration</span>
+              <h1>We Decorate Your Home Like <em>Never Before</em></h1>
+              <p>Book birthday, anniversary, baby shower, house warming and festive decoration with transparent pricing, quick confirmation and a trained setup team.</p>
+              <div class="hero-badges">
+                <span>Same day slots</span>
+                <span>2-hour setup window</span>
+                <span>Advance or full payment</span>
+              </div>
+              <div class="hero-buttons">
+                <button class="primary-button" type="button" data-open-booking data-package="Birthday Decoration" data-price="999">Start Booking</button>
+                <a class="secondary-button" href="#packages">See Packages</a>
+              </div>
+            </div>
+            <aside class="price-card">
+              <small>Starting From</small>
+              <strong>Rs. 999</strong>
+              <span>4.9 average rating</span>
+              <button type="button" data-open-booking data-package="Birthday Decoration" data-price="999">Book Now</button>
+            </aside>
+          </section>
+
+          <section class="occasion-strip" id="decorations">
+            <h2>Choose Your Occasion</h2>
+            <div class="occasion-grid">
+              <button class="occasion-card selected" data-open-booking data-package="Birthday Decoration" data-price="999">BD<span>Birthday</span><small>From Rs. 999</small></button>
+              <button class="occasion-card" data-open-booking data-package="Anniversary Decoration" data-price="1499">AN<span>Anniversary</span><small>From Rs. 1,499</small></button>
+              <button class="occasion-card" data-open-booking data-package="Baby Shower Decoration" data-price="2499">BS<span>Baby Shower</span><small>From Rs. 2,499</small></button>
+              <button class="occasion-card" data-open-booking data-package="House Warming Decoration" data-price="1999">HW<span>House Warming</span><small>From Rs. 1,999</small></button>
+              <button class="occasion-card" data-open-booking data-package="Engagement Decoration" data-price="2999">EN<span>Engagement</span><small>From Rs. 2,999</small></button>
+              <button class="occasion-card" data-open-booking data-package="Festival Decoration" data-price="1799">FE<span>Festival</span><small>From Rs. 1,799</small></button>
+            </div>
+          </section>
+
+          <section class="quick-process" aria-label="Booking process">
+            <article><span>1</span><strong>Pick package</strong><small>Select the closest occasion and budget.</small></article>
+            <article><span>2</span><strong>Share details</strong><small>Add date, time, address and theme notes.</small></article>
+            <article><span>3</span><strong>Get confirmation</strong><small>Admin reviews the request and confirms the slot.</small></article>
+            <article><span>4</span><strong>Relax</strong><small>The setup team reaches your home on time.</small></article>
+          </section>
+
+          <section class="trending" id="packages">
+            <div class="section-heading light">
+              <h2>Trending Decorations</h2>
+              <a href="#gallery">View All</a>
+            </div>
+            <div class="package-grid">
+              <article class="package-card">
+                <span class="tag">Popular</span>
+                <img loading="lazy" decoding="async" src="https://images.unsplash.com/photo-1602631985686-1bb0e6a8696e?auto=format&fit=crop&w=700&q=80" alt="Rose gold birthday room decor" />
+                <h3>Rose Gold Birthday Room Decor</h3>
+                <p>5.0 rating <span>120 reviews</span></p>
+                <strong>Rs. 2,499</strong>
+                <button data-open-booking data-package="Rose Gold Birthday Room Decor" data-price="2499">Book now</button>
+              </article>
+              <article class="package-card">
+                <img loading="lazy" decoding="async" src="https://images.unsplash.com/photo-1530103862676-de8c9debad1d?auto=format&fit=crop&w=700&q=80" alt="Luxury balloon canopy decor" />
+                <h3>Luxury Balloon Canopy Decor</h3>
+                <p>4.9 rating <span>96 reviews</span></p>
+                <strong>Rs. 3,499</strong>
+                <button data-open-booking data-package="Luxury Balloon Canopy Decor" data-price="3499">Book now</button>
+              </article>
+              <article class="package-card">
+                <img loading="lazy" decoding="async" src="https://images.unsplash.com/photo-1519225421980-715cb0215aed?auto=format&fit=crop&w=700&q=80" alt="Romantic anniversary decoration" />
+                <h3>Romantic Anniversary Decoration</h3>
+                <p>4.7 rating <span>103 reviews</span></p>
+                <strong>Rs. 2,999</strong>
+                <button data-open-booking data-package="Romantic Anniversary Decoration" data-price="2999">Book now</button>
+              </article>
+              <article class="package-card">
+                <img loading="lazy" decoding="async" src="https://images.unsplash.com/photo-1527529482837-4698179dc6ce?auto=format&fit=crop&w=700&q=80" alt="Princess party theme decoration" />
+                <h3>Princess Theme Decoration</h3>
+                <p>4.8 rating <span>75 reviews</span></p>
+                <strong>Rs. 2,499</strong>
+                <button data-open-booking data-package="Princess Theme Decoration" data-price="2499">Book now</button>
+              </article>
+              <article class="package-card">
+                <img loading="lazy" decoding="async" src="https://images.unsplash.com/photo-1558636508-e0db3814bd1d?auto=format&fit=crop&w=700&q=80" alt="Surprise birthday decoration" />
+                <h3>Surprise Birthday Decoration</h3>
+                <p>4.9 rating <span>99 reviews</span></p>
+                <strong>Rs. 1,999</strong>
+                <button data-open-booking data-package="Surprise Birthday Decoration" data-price="1999">Book now</button>
+              </article>
+            </div>
+          </section>
+
+          <section class="transformation" id="themes">
+            <div>
+              <h2>See The <em>Transformation</em></h2>
+              <p>Turning empty rooms into warm celebration spaces with lights, balloons and custom props.</p>
+              <button class="pill-button small" type="button" data-open-booking data-package="Custom Home Decoration" data-price="999">Plan Yours</button>
+            </div>
+            <div class="before-after">
+              <img loading="lazy" decoding="async" src="https://images.unsplash.com/photo-1505693416388-ac5ce068fe85?auto=format&fit=crop&w=900&q=80" alt="Room before decoration" />
+              <img loading="lazy" decoding="async" src="https://images.unsplash.com/photo-1511795409834-ef04bbd61622?auto=format&fit=crop&w=900&q=80" alt="Room after party decoration" />
+            </div>
+          </section>
+
+          <section class="gallery" id="gallery">
+            <h2>Our Work Gallery</h2>
+            <div class="tabs" aria-label="Gallery filters">
+              <button class="active" data-filter="all">All</button>
+              <button data-filter="birthday">Birthday</button>
+              <button data-filter="anniversary">Anniversary</button>
+              <button data-filter="baby-shower">Baby Shower</button>
+              <button data-filter="engagement">Engagement</button>
+              <button data-filter="festival">Festival</button>
+            </div>
+            <div class="gallery-grid">
+              <img loading="lazy" decoding="async" data-category="birthday" src="https://images.unsplash.com/photo-1519671482749-fd09be7ccebf?auto=format&fit=crop&w=600&q=80" alt="Warm balloon celebration decor" />
+              <img loading="lazy" decoding="async" data-category="baby-shower" src="https://images.unsplash.com/photo-1464366400600-7168b8af9bc3?auto=format&fit=crop&w=600&q=80" alt="Pink event decoration" />
+              <img loading="lazy" decoding="async" data-category="anniversary" src="https://images.unsplash.com/photo-1505236858219-8359eb29e329?auto=format&fit=crop&w=600&q=80" alt="Luxury table and lights decor" />
+              <img loading="lazy" decoding="async" data-category="birthday" src="https://images.unsplash.com/photo-1513151233558-d860c5398176?auto=format&fit=crop&w=600&q=80" alt="Birthday balloons and lights" />
+              <img loading="lazy" decoding="async" data-category="engagement" src="https://images.unsplash.com/photo-1527529482837-4698179dc6ce?auto=format&fit=crop&w=600&q=80" alt="Party decor closeup" />
+              <img loading="lazy" decoding="async" data-category="festival" src="https://images.unsplash.com/photo-1529634806980-85c3dd6d34ac?auto=format&fit=crop&w=600&q=80" alt="Elegant event decoration" />
+            </div>
+          </section>
+
+          <section class="features" id="about">
+            <article><span>01</span><strong>Custom Themes</strong><small>Tailored to your home and celebration.</small></article>
+            <article><span>02</span><strong>Professional Team</strong><small>Experienced decorators and trained setup crew.</small></article>
+            <article><span>03</span><strong>Premium Quality</strong><small>High quality balloons, lights and props.</small></article>
+            <article><span>04</span><strong>On-Time Delivery</strong><small>We value your precious celebration time.</small></article>
+            <article><span>05</span><strong>Satisfaction</strong><small>Designed to make your day feel special.</small></article>
+          </section>
+
+          <section class="reviews" id="reviews">
+            <h2>What Our Customers Say</h2>
+            <div class="review-grid">
+              <article><strong>5.0 / 5</strong><p>Amazing decoration! The team was punctual and very professional.</p><span>Priya Sharma, Bangalore</span></article>
+              <article><strong>5.0 / 5</strong><p>They made our anniversary so special. The setup was beyond expectations.</p><span>Rohit & Neha, Mumbai</span></article>
+              <article><strong>5.0 / 5</strong><p>Best birthday decoration for my daughter. She was so happy.</p><span>Ankit Verma, Delhi</span></article>
+            </div>
+          </section>
+
+          <section class="booking-band" id="booking">
+            <div class="booking-copy">
+              <h2>Ready to Celebrate?</h2>
+              <p>Choose a package and complete a guided booking with date, address and payment preference.</p>
+            </div>
+            <div class="booking-steps">
+              <article><span>01</span><strong>Select Package</strong><small>Choose a decoration style and budget.</small></article>
+              <article><span>02</span><strong>Add Details</strong><small>Share date, time, address and theme notes.</small></article>
+              <article><span>03</span><strong>Payment Choice</strong><small>Select advance or full payment for Razorpay.</small></article>
+              <button class="primary-button" type="button" data-open-booking data-package="Birthday Decoration" data-price="999">Start Booking</button>
+            </div>
+          </section>
+
+          <!-- Booking Modal -->
+          <div class="booking-modal" id="bookingModal" aria-hidden="true">
+            <div class="booking-dialog" role="dialog" aria-modal="true" aria-labelledby="bookingTitle">
+              <button class="modal-close" type="button" id="closeBooking" aria-label="Close booking">x</button>
+              <aside class="checkout-summary">
+                <span class="eyebrow">Selected package</span>
+                <h2 id="bookingTitle">Complete Your Booking</h2>
+                <div class="selected-package">
+                  <small>Package</small>
+                  <strong id="selectedPackageName">Birthday Decoration</strong>
+                  <span id="selectedPackagePrice">Rs. 999</span>
+                </div>
+                <div class="payment-note">
+                  <strong>Secure Booking</strong>
+                  <p>Your booking details are saved securely. Admin will confirm your slot shortly.</p>
+                </div>
+              </aside>
+              <form class="booking-form checkout-form" id="bookingForm">
+                <div class="firebase-alert" id="firebaseAlert"></div>
+                <input type="hidden" name="package" id="packageSelect" value="Birthday Decoration" />
+                <input type="hidden" name="packagePrice" id="packagePrice" value="999" />
+                <input type="hidden" name="payableAmount" id="payableAmountInput" value="500" />
+                <div class="form-row">
+                  <label>Full Name<input required name="name" autocomplete="name" placeholder="Your name" minlength="2" /></label>
+                  <label>Phone<input required name="phone" autocomplete="tel" inputmode="tel" placeholder="+91 98765 43210" pattern="[0-9+ ]{10,16}" /></label>
+                </div>
+                <div class="form-row">
+                  <label>Email<input name="email" type="email" autocomplete="email" placeholder="you@example.com" /></label>
+                  <label>Decoration Type<select name="occasion">
+                    <option>Birthday</option>
+                    <option>Anniversary</option>
+                    <option>Baby Shower</option>
+                    <option>House Warming</option>
+                    <option>Engagement</option>
+                    <option>Festival</option>
+                    <option>Custom</option>
+                  </select></label>
+                </div>
+                <div class="form-row">
+                  <label>Date<input required name="date" type="date" /></label>
+                  <label>Time<input required name="time" type="time" /></label>
+                </div>
+                <label>Address<textarea required name="address" rows="3" placeholder="Complete decoration address"></textarea></label>
+                <div class="payment-section">
+                  <div class="payment-head">
+                    <strong>Payment Preference</strong>
+                    <span id="payableAmount">Payable now: Rs. 500</span>
+                  </div>
+                  <div class="payment-options">
+                    <label class="payment-option">
+                      <input type="radio" name="paymentType" value="Advance" checked />
+                      <span><strong>Advance</strong><small>Reserve booking now</small></span>
+                    </label>
+                    <label class="payment-option">
+                      <input type="radio" name="paymentType" value="Full Payment" />
+                      <span><strong>Full Payment</strong><small>Pay complete package amount</small></span>
+                    </label>
+                  </div>
+                  <label>Payment Method<select name="paymentMethod">
+                    <option>Razorpay Online</option>
+                    <option>UPI</option>
+                    <option>Cash after confirmation</option>
+                  </select></label>
+                </div>
+                <label>Notes<textarea name="notes" rows="3" placeholder="Theme colors, room size, occasion details"></textarea></label>
+                <button class="primary-button" type="submit">Submit Booking</button>
+                <p class="form-status" id="bookingStatus" role="status"></p>
+              </form>
+            </div>
+          </div>
+        </section>
+
+        <!-- ══ ADMIN PAGE ══ -->
+        <section class="page page-admin" data-page="admin">
+          <section class="admin-dashboard" id="adminDashboard">
+            <section class="admin-hero">
+              <div>
+                <span class="eyebrow">Admin dashboard</span>
+                <h1>Booking Requests</h1>
+              </div>
+            </section>
+            <section class="admin-panel">
+              <div class="admin-summary">
+                <article><small>Total Bookings</small><strong id="totalBookings">0</strong></article>
+                <article><small>Today</small><strong id="todayBookings">0</strong></article>
+                <article><small>Status</small><strong id="adminStatus">Offline</strong></article>
+              </div>
+              <div class="admin-toolbar">
+                <label>Search bookings<input id="bookingSearch" type="search" placeholder="Search name, phone, package or address" /></label>
+              </div>
+              <div class="table-wrap">
+                <table>
+                  <thead>
+                    <tr>
+                      <th>Name</th>
+                      <th>Phone</th>
+                      <th>Package</th>
+                      <th>Payment</th>
+                      <th>Date</th>
+                      <th>Address</th>
+                      <th>Notes</th>
+                      <th>Status</th>
+                    </tr>
+                  </thead>
+                  <tbody id="bookingRows">
+                    <tr><td colspan="7">Loading bookings...</td></tr>
+                  </tbody>
+                </table>
+              </div>
+            </section>
+          </section>
+        </section>
+      </main>
+
+      <footer class="footer">
+        <div>
+          <strong>Decor My Space</strong>
+          <p>We create beautiful memories with decoration made for your home.</p>
+        </div>
+        <div>
+          <strong>Contact Us</strong>
+          <p>+91 98765 43210<br />hello@decormyspace.com<br />Bangalore, Karnataka</p>
+        </div>
+        <a class="whatsapp" href="https://wa.me/919876543210" aria-label="WhatsApp">WA</a>
+      </footer>
+      <div class="mobile-cta" aria-label="Quick booking actions">
+        <a href="tel:+919876543210">Call</a>
+        <button type="button" data-open-booking data-package="Birthday Decoration" data-price="999">Book Now</button>
+      </div>
+    </div>
+
+    <script type="module" src="./app.js"></script>
+  </body>
+</html>
