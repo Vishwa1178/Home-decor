@@ -1,0 +1,22 @@
+{
+  "name": "home-decor-backend",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Express API for the Home Decor booking site",
+  "main": "src/server.js",
+  "scripts": {
+    "start": "node src/server.js",
+    "dev": "node --watch src/server.js"
+  },
+  "engines": {
+    "node": ">=18"
+  },
+  "dependencies": {
+    "compression": "^1.7.5",
+    "cors": "^2.8.5",
+    "dotenv": "^16.4.5",
+    "express": "^4.21.1",
+    "helmet": "^8.0.0",
+    "morgan": "^1.10.0"
+  }
+}
