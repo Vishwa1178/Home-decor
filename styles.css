@@ -433,8 +433,9 @@ em {
   margin: 18px clamp(18px, 5vw, 64px);
   padding: clamp(22px, 3vw, 34px);
   border-radius: 12px;
-  background: linear-gradient(135deg, #101424 0%, #252b42 100%);
-  color: #fff;
+  border: 1px solid rgba(242, 216, 216, 0.8);
+  background: #fff;
+  color: var(--ink);
 }
 
 .section-heading {
@@ -461,28 +462,29 @@ em {
 
 .package-grid {
   display: grid;
-  grid-template-columns: repeat(5, minmax(0, 1fr));
-  gap: 22px;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 16px;
 }
 
 .package-card {
   position: relative;
   overflow: hidden;
-  min-height: 306px;
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  min-height: 0;
+  border: 1px solid #edf0f5;
   border-radius: 10px;
-  background: #1a2035;
+  background: #fff;
+  box-shadow: 0 10px 28px rgba(30, 36, 55, 0.08);
   cursor: pointer;
 }
 
 .package-card:hover {
   transform: translateY(-4px);
   transition: transform 180ms ease, border-color 180ms ease;
-  border-color: rgba(255, 255, 255, 0.28);
+  border-color: rgba(245, 49, 104, 0.26);
 }
 
 .package-card img {
-  height: 164px;
+  height: 252px;
   object-fit: cover;
 }
 
@@ -499,33 +501,39 @@ em {
 }
 
 .package-card h3 {
-  margin: 14px 14px 8px;
-  font-size: 15px;
+  min-height: 42px;
+  margin: 14px 16px 8px;
+  color: #111827;
+  font-size: 18px;
   line-height: 1.25;
 }
 
 .package-card p {
-  margin: 0 14px 8px;
-  color: #ffba22;
+  margin: 0 16px 10px;
+  color: #02a44a;
   font-size: 13px;
+  font-weight: 900;
 }
 
 .package-card p span {
-  color: #aeb5c8;
+  color: #98a1b3;
+  font-weight: 500;
 }
 
 .package-card strong {
-  margin-left: 14px;
-  font-size: 22px;
+  display: block;
+  margin: 0 16px 58px;
+  color: #071225;
+  font-size: 24px;
 }
 
 .package-card button {
   position: absolute;
-  right: 12px;
-  bottom: 14px;
-  width: auto;
-  height: 32px;
-  padding: 0 12px;
+  right: 16px;
+  bottom: 16px;
+  width: calc(100% - 32px);
+  height: 38px;
+  padding: 0 14px;
   color: #fff;
   border: 0;
   border-radius: 8px;
@@ -640,16 +648,26 @@ em {
 }
 
 .review-grid {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 26px;
+  --review-gap: 22px;
+  --review-card-width: calc((100% - (var(--review-gap) * 2)) / 3);
+  display: flex;
+  gap: var(--review-gap);
+  overflow: hidden;
+  -webkit-mask-image: linear-gradient(90deg, transparent, #000 6%, #000 94%, transparent);
+  mask-image: linear-gradient(90deg, transparent, #000 6%, #000 94%, transparent);
+}
+
+.review-grid:hover article {
+  animation-play-state: paused;
 }
 
 .review-grid article {
+  flex: 0 0 var(--review-card-width);
   padding: 24px;
   border: 1px solid var(--line);
   border-radius: 8px;
   background: #fff;
+  animation: reviewSlide 24s linear infinite;
 }
 
 .review-grid strong {
@@ -665,6 +683,12 @@ em {
   color: var(--muted);
   font-size: 13px;
   font-weight: 700;
+}
+
+@keyframes reviewSlide {
+  to {
+    transform: translateX(calc(-3 * (var(--review-card-width) + var(--review-gap))));
+  }
 }
 
 .booking-band {
@@ -1199,6 +1223,11 @@ tbody tr:hover {
     border-radius: 0;
   }
 
+  body {
+    background: #fffaf8;
+    overflow-x: hidden;
+  }
+
   .topbar,
   .hero,
   .occasion-strip,
@@ -1214,6 +1243,8 @@ tbody tr:hover {
   .topbar {
     gap: 12px;
     min-height: 72px;
+    padding-top: 12px;
+    padding-bottom: 12px;
   }
 
   .brand {
@@ -1230,12 +1261,7 @@ tbody tr:hover {
   }
 
   .top-actions {
-    margin-left: auto;
-  }
-
-  .top-actions .pill-button {
-    min-height: 40px;
-    padding: 0 16px;
+    display: none;
   }
 
   .call-button {
@@ -1243,10 +1269,18 @@ tbody tr:hover {
   }
 
   .nav-links {
-    gap: 20px;
+    gap: 10px;
     font-size: 13px;
-    padding-bottom: 2px;
+    padding: 4px 0 2px;
     scrollbar-width: none;
+  }
+
+  .nav-links a {
+    flex: 0 0 auto;
+    padding: 10px 12px;
+    border: 1px solid var(--line);
+    border-radius: 999px;
+    background: #fff;
   }
 
   .nav-links::-webkit-scrollbar {
@@ -1254,40 +1288,113 @@ tbody tr:hover {
   }
 
   .hero {
-    min-height: 640px;
+    grid-template-columns: minmax(0, 1fr);
+    min-height: 0;
     align-items: start;
-    padding-top: 44px;
+    overflow: hidden;
+    padding-top: 30px;
+    padding-bottom: 34px;
     background:
-      linear-gradient(180deg, #fff 0%, rgba(255, 255, 255, 0.88) 46%, rgba(255, 255, 255, 0.1) 100%),
+      linear-gradient(180deg, #fff 0%, rgba(255, 255, 255, 0.94) 54%, rgba(255, 246, 249, 0.72) 100%),
       url("https://images.unsplash.com/photo-1511795409834-ef04bbd61622?auto=format&fit=crop&w=1000&q=85") center bottom / cover;
   }
 
+  .hero-copy {
+    width: 100%;
+    max-width: 360px;
+    min-width: 0;
+  }
+
+  .eyebrow {
+    max-width: 100%;
+    font-size: 11px;
+    line-height: 1.2;
+  }
+
   .hero h1 {
-    font-size: 40px;
+    margin: 18px 0 14px;
+    max-width: 100%;
+    font-size: 32px;
+    line-height: 1.05;
+    overflow-wrap: normal;
+  }
+
+  .hero h1 em {
+    display: inline-block;
+    white-space: nowrap;
+  }
+
+  .hero p {
+    max-width: 100%;
+    font-size: 16px;
+    line-height: 1.65;
+    overflow-wrap: break-word;
+  }
+
+  .hero-badges {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin: 22px 0;
+    font-size: 12px;
+  }
+
+  .hero-badges span {
+    display: flex;
+    align-items: center;
+    flex: 1 1 148px;
+    min-height: 44px;
+    padding: 10px 12px;
+    border-color: rgba(245, 49, 104, 0.22);
+    background: rgba(255, 255, 255, 0.9);
+  }
+
+  .hero-badges span:last-child {
+    flex-basis: 100%;
   }
 
   .hero-buttons .primary-button,
   .hero-buttons .secondary-button {
     width: 100%;
+    min-height: 52px;
+  }
+
+  .primary-button,
+  .secondary-button {
+    text-align: center;
   }
 
   .occasion-card {
-    min-height: 118px;
-    font-size: 28px;
+    min-height: 122px;
+    padding: 16px 10px;
+    font-size: 26px;
   }
 
   .package-card {
+    display: grid;
     min-height: 0;
+    overflow: hidden;
   }
 
   .package-card img {
-    height: 210px;
+    height: 190px;
   }
 
   .section-heading {
     align-items: flex-start;
     gap: 12px;
     flex-direction: column;
+  }
+
+  .section-heading h2 {
+    font-size: 24px;
+    line-height: 1.12;
+  }
+
+  .section-heading a {
+    width: max-content;
+    flex: 0 0 auto;
+    padding: 9px 14px;
   }
 
   .tabs {
@@ -1308,15 +1415,13 @@ tbody tr:hover {
   }
 
   .price-card {
-    justify-self: start;
+    display: none;
   }
 
   .occasion-grid,
-  .package-grid,
   .gallery-grid,
   .features,
   .quick-process,
-  .review-grid,
   .form-row,
   .booking-steps,
   .payment-options,
@@ -1331,13 +1436,101 @@ tbody tr:hover {
   .features,
   .quick-process,
   .booking-band {
-    margin-left: 14px;
-    margin-right: 14px;
+    margin-left: 12px;
+    margin-right: 12px;
   }
 
   .trending,
   .booking-band {
-    padding: 22px;
+    padding: 20px;
+  }
+
+  .trending {
+    border-radius: 10px;
+  }
+
+  .occasion-grid,
+  .gallery-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 12px;
+  }
+
+  .package-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 12px;
+  }
+
+  .features,
+  .quick-process,
+  .form-row,
+  .booking-steps,
+  .payment-options,
+  .tabs,
+  .admin-summary,
+  .admin-toolbar,
+  .footer {
+    grid-template-columns: 1fr;
+  }
+
+  .quick-process {
+    padding: 12px;
+  }
+
+  .quick-process article,
+  .features article {
+    align-items: center;
+    min-height: 0;
+    padding: 14px;
+  }
+
+  .package-card h3 {
+    min-height: 38px;
+    margin: 10px 10px 6px;
+    font-size: 13px;
+    line-height: 1.25;
+  }
+
+  .package-card p {
+    margin: 0 10px 6px;
+    font-size: 11px;
+    line-height: 1.2;
+  }
+
+  .package-card p span {
+    display: block;
+    margin-top: 2px;
+  }
+
+  .package-card strong {
+    margin: 0 10px 50px;
+    font-size: 18px;
+    line-height: 1;
+  }
+
+  .package-card button {
+    right: 10px;
+    bottom: 10px;
+    width: calc(100% - 20px);
+    height: 36px;
+    padding: 0 8px;
+    font-size: 12px;
+  }
+
+  .review-grid {
+    --review-gap: 12px;
+    --review-card-width: calc((100% - var(--review-gap)) / 2);
+  }
+
+  .review-grid article {
+    padding: 18px;
+  }
+
+  .review-grid p {
+    font-size: 14px;
+  }
+
+  .gallery-grid img {
+    height: 150px;
   }
 
   .booking-modal {
@@ -1444,58 +1637,54 @@ tbody tr:hover {
   }
 
   .footer {
-    padding-bottom: 92px;
+    gap: 14px;
+    padding-top: 20px;
+    padding-bottom: 20px;
+  }
+
+  .footer strong {
+    font-size: 14px;
+  }
+
+  .footer p {
+    margin-top: 5px;
+    font-size: 12px;
+    line-height: 1.45;
+  }
+
+  .whatsapp {
+    width: 46px;
+    height: 46px;
+    font-size: 20px;
   }
 
   .mobile-cta {
-    position: fixed;
-    right: 12px;
-    bottom: 12px;
-    left: 12px;
-    z-index: 30;
-    display: grid;
-    grid-template-columns: 0.8fr 1.2fr;
-    gap: 10px;
-    padding: 10px;
-    border: 1px solid rgba(242, 216, 216, 0.9);
-    border-radius: 12px;
-    background: rgba(255, 255, 255, 0.96);
-    box-shadow: 0 18px 50px rgba(34, 20, 25, 0.18);
-    backdrop-filter: blur(12px);
-  }
-
-  .mobile-cta a,
-  .mobile-cta button {
-    display: grid;
-    place-items: center;
-    min-height: 46px;
-    border-radius: 8px;
-    border: 1px solid var(--pink);
-    font-weight: 900;
-  }
-
-  .mobile-cta a {
-    color: var(--pink);
-    background: #fff;
-  }
-
-  .mobile-cta button {
-    color: #fff;
-    background: var(--pink);
+    display: none;
   }
 }
 
 @media (max-width: 430px) {
   .hero {
-    min-height: 610px;
+    padding-top: 26px;
+    padding-bottom: 30px;
   }
 
   .hero h1 {
-    font-size: 34px;
+    font-size: 29px;
   }
 
   .hero p {
+    font-size: 15px;
     line-height: 1.6;
+  }
+
+  .hero-badges {
+    display: grid;
+    grid-template-columns: 1fr;
+  }
+
+  .hero-badges span:last-child {
+    flex-basis: auto;
   }
 
   .occasion-strip h2,
@@ -1506,7 +1695,24 @@ tbody tr:hover {
 
   .package-card img,
   .gallery-grid img {
-    height: 185px;
+    height: 150px;
+  }
+
+  .section-heading h2 {
+    font-size: 21px;
+  }
+
+  .section-heading a {
+    padding: 8px 12px;
+    font-size: 11px;
+  }
+
+  .package-card h3 {
+    font-size: 12px;
+  }
+
+  .package-card strong {
+    font-size: 17px;
   }
 
   .booking-copy h2 {
