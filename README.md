@@ -1,95 +1,56 @@
-# Home Decor Booking Site — Setup Guide
+# Home Decor — Production
 
-## The Problem You're Seeing
-
-> "Email/Password sign-in is not enabled. Enable it in Firebase Console > Authentication > Sign-in method."
-
-This error means Firebase is connected but **Email/Password authentication is turned off** in your Firebase project. Fix it with these steps.
-
----
-
-## Step 1 — Enable Email/Password Authentication
-
-1. Open [Firebase Console](https://console.firebase.google.com)
-2. Select your project: **home-decor-74a7c**
-3. Left sidebar → **Authentication**
-4. Click the **Sign-in method** tab
-5. Click **Email/Password**
-6. Toggle **Enable** → **Save**
-
----
-
-## Step 2 — Create the Admin User
-
-After enabling Email/Password, create the account the admin will log in with:
-
-1. In Firebase Console → **Authentication** → **Users** tab
-2. Click **Add user**
-3. Email: `awonderonesurprise7@gmail.com`
-4. Password: `Admin@1234` (change this to something secure!)
-5. Click **Add user**
-
----
-
-## Step 3 — Set Firestore Rules
-
-1. Firebase Console → **Firestore Database** → **Rules** tab
-2. Replace the rules with:
+Production-ready split of the Home Decor booking site.
 
 ```
-rules_version = '2';
-service cloud.firestore {
-  match /databases/{database}/documents {
-    match /bookings/{bookingId} {
-      // Anyone can create a booking (customers submitting forms)
-      allow create: if true;
-      // Only the admin can read, update, or delete bookings
-      allow read, update, delete: if request.auth != null
-        && request.auth.token.email == "awonderonesurprise7@gmail.com";
-    }
-  }
-}
+Home-Decor-Production/
+├── frontend/   # React-style Vite app (static site + Firebase Web SDK)
+├── backend/    # Express.js REST API
+├── README.md
+└── DEPLOYMENT_GUIDE.md
 ```
 
-3. Click **Publish**
+The original UI and end-user functionality are preserved verbatim. What changed:
 
----
+- Secrets (Firebase config, admin email) are now sourced from environment variables.
+- The frontend is built and served by Vite (Vercel-ready).
+- A dedicated Express backend (Render-ready) hosts health checks and REST endpoints and is where any additional server-side logic should live.
+- Hardcoded URLs were replaced with `VITE_API_URL` on the frontend.
 
-## Step 4 — Allow Localhost (for local testing)
+## Quick start
 
-1. Firebase Console → **Authentication** → **Settings** tab
-2. Under **Authorized domains**, make sure `localhost` and `127.0.0.1` are listed
-3. If not, click **Add domain** and add them
+### Frontend
 
----
-
-## Run Locally
-
-```powershell
-npm run dev
+```bash
+cd frontend
+cp .env.example .env       # fill in Firebase + VITE_API_URL
+npm install
+npm run dev                # http://localhost:5173
+npm run build              # production build to dist/
+npm run preview            # preview the built site
 ```
 
-- Site: `http://127.0.0.1:5173`
-- Admin: `http://127.0.0.1:5173/admin`
+### Backend
 
----
-
-## How It Works
-
-- **Customer books** → data saved to Firestore `bookings` collection
-- **Admin logs in** → Firebase Email/Password auth verifies credentials
-- **Admin dashboard** → shows all bookings in real-time (live updates via Firestore `onSnapshot`)
-- **Status column** → shows Pending / Confirmed / Cancelled per booking
-
----
-
-## Firebase Config (already set in firebase-config.js)
-
-```js
-apiKey: "AIzaSyBGmV1VR8igcmnCEzoI5-3a9dfOUnUYEW0"
-authDomain: "home-decor-74a7c.firebaseapp.com"
-projectId: "home-decor-74a7c"
-storageBucket: "home-decor-74a7c.firebasestorage.app"
-messagingSenderId: "1054389592963"
-appId: "1:1054389592963:web:f520a1f526819fce184cb6"
+```bash
+cd backend
+cp .env.example .env       # fill in PORT, CORS_ORIGIN, etc.
+npm install
+npm start                  # http://localhost:5000
+# Health check:
+curl http://localhost:5000/health
 ```
+
+## API
+
+| Method | Path                    | Description                              |
+| ------ | ----------------------- | ---------------------------------------- |
+| GET    | `/health`               | Service liveness + metadata              |
+| GET    | `/api/bookings/packages`| List decoration packages                 |
+| POST   | `/api/bookings/validate`| Server-side validation for booking form  |
+
+Firestore reads/writes still happen through the Firebase Web SDK on the client (unchanged behavior), governed by Firestore security rules in the Firebase console.
+
+## Environment variables
+
+See `frontend/.env.example` and `backend/.env.example`. No secrets are committed. Deployment guidance lives in `DEPLOYMENT_GUIDE.md`.
