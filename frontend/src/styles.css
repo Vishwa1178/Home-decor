@@ -1169,6 +1169,231 @@ tbody tr:hover {
   display: none;
 }
 
+.nav-item {
+  position: relative;
+}
+
+.nav-links a,
+.nav-drop-trigger {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 24px 0;
+  border-bottom: 2px solid transparent;
+  background: none;
+  border-top: none;
+  border-left: none;
+  border-right: none;
+  font: inherit;
+  color: var(--ink);
+  cursor: pointer;
+}
+
+.nav-links a.active,
+.nav-links a:hover,
+.nav-drop-trigger:hover,
+.nav-item.open .nav-drop-trigger {
+  color: var(--pink);
+  border-bottom-color: var(--pink);
+}
+
+.nav-caret {
+  width: 7px;
+  height: 7px;
+  border-right: 1.6px solid currentColor;
+  border-bottom: 1.6px solid currentColor;
+  transform: rotate(45deg) translateY(-2px);
+  transition: transform 180ms ease;
+}
+
+.nav-item.open .nav-caret {
+  transform: rotate(-135deg) translateY(2px);
+}
+
+.nav-dropdown {
+  position: absolute;
+  top: calc(100% + 6px);
+  left: 50%;
+  transform: translate(-50%, -6px);
+  min-width: 220px;
+  padding: 10px;
+  background: var(--panel);
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  box-shadow: var(--shadow);
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+  transition: opacity 180ms ease, transform 180ms ease, visibility 180ms;
+  z-index: 20;
+}
+
+.nav-item.open .nav-dropdown {
+  opacity: 1;
+  visibility: visible;
+  pointer-events: auto;
+  transform: translate(-50%, 0);
+}
+
+.nav-dropdown a {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 12px;
+  border-radius: 8px;
+  border-bottom: none;
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--ink);
+  white-space: nowrap;
+}
+
+.nav-dropdown a::before {
+  content: "";
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--line);
+  flex: none;
+}
+
+.nav-dropdown a:hover {
+  background: var(--rose);
+  color: var(--pink);
+}
+
+.nav-dropdown a:hover::before {
+  background: var(--pink);
+}
+
+.hamburger-btn {
+  display: none;
+  flex-direction: column;
+  justify-content: center;
+  gap: 5px;
+  width: 40px;
+  height: 40px;
+  padding: 0;
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  background: #fff;
+  cursor: pointer;
+  flex: none;
+}
+
+.hamburger-btn span {
+  display: block;
+  width: 20px;
+  height: 2px;
+  margin: 0 auto;
+  background: var(--ink);
+  border-radius: 2px;
+  transition: transform 220ms ease, opacity 220ms ease;
+}
+
+.hamburger-btn[aria-expanded="true"] span:nth-child(1) {
+  transform: translateY(7px) rotate(45deg);
+}
+.hamburger-btn[aria-expanded="true"] span:nth-child(2) {
+  opacity: 0;
+}
+.hamburger-btn[aria-expanded="true"] span:nth-child(3) {
+  transform: translateY(-7px) rotate(-45deg);
+}
+
+@media (max-width: 900px) {
+  .hamburger-btn {
+    display: flex;
+  }
+
+  .nav-links {
+    position: fixed;
+    inset: 0 0 0 auto;
+    top: 0;
+    width: min(320px, 84vw);
+    height: 100vh;
+    flex-direction: column;
+    align-items: stretch;
+    justify-content: flex-start;
+    gap: 0;
+    padding: 88px 20px 24px;
+    background: #fff;
+    box-shadow: -18px 0 40px rgba(34, 20, 25, 0.16);
+    transform: translateX(100%);
+    transition: transform 260ms ease;
+    overflow-y: auto;
+    z-index: 60;
+    order: unset;
+  }
+
+  html.nav-open .nav-links {
+    transform: translateX(0);
+  }
+
+  html.nav-open .topbar {
+    z-index: 70;
+  }
+
+  html.nav-open::before {
+    content: "";
+    position: fixed;
+    inset: 0;
+    background: rgba(18, 21, 33, 0.4);
+    z-index: 50;
+  }
+
+  .nav-links a,
+  .nav-drop-trigger {
+    width: 100%;
+    justify-content: space-between;
+    padding: 15px 4px;
+    border-bottom: 1px solid var(--line);
+    font-size: 15px;
+  }
+
+  .nav-dropdown {
+    position: static;
+    transform: none;
+    opacity: 1;
+    visibility: visible;
+    pointer-events: auto;
+    max-height: 0;
+    overflow: hidden;
+    box-shadow: none;
+    border: none;
+    padding: 0 0 0 12px;
+    margin: 0;
+    transition: max-height 220ms ease;
+  }
+
+  .nav-item.open .nav-dropdown {
+    max-height: 600px;
+    padding: 4px 0 10px 12px;
+  }
+
+  .nav-dropdown a {
+    padding: 11px 8px;
+    border-bottom: none;
+  }
+
+  .nav-dropdown a {
+    justify-content: flex-start;
+    text-align: right;
+    white-space: normal;
+    width: 100%;
+  }
+
+  .nav-dropdown a {
+    align-items: flex-start;
+    padding: 11px 8px;
+    line-height: 1.4;
+  }
+
+  .nav-dropdown a::before {
+    margin-top: 7px;
+  }
+}
+
 @media (max-width: 1100px) {
   .topbar {
     flex-wrap: wrap;

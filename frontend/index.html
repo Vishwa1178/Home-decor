@@ -144,14 +144,77 @@
           </span>
         </a>
         <nav class="nav-links" id="publicNav" aria-label="Primary">
-          <a href="/" data-route="/" class="active">Home</a>
-          <a href="#decorations">Decorations</a>
-          <a href="#themes">Themes</a>
-          <a href="#packages">Packages</a>
-          <a href="#gallery">Gallery</a>
-          <a href="#reviews">Reviews</a>
-          <a href="#about">About Us</a>
+          <div class="nav-item" data-nav-item>
+            <a href="/" data-route="/" class="active">Home</a>
+          </div>
+
+          <div class="nav-item has-dropdown" data-nav-item>
+            <button class="nav-drop-trigger" type="button" aria-expanded="false">
+              Birthday <span class="nav-caret" aria-hidden="true"></span>
+            </button>
+            <div class="nav-dropdown">
+              <a href="#decorations" data-package="Birthday Decor" data-price="999">Birthday Decor</a>
+              <a href="#decorations" data-package="Balloon Decor" data-price="899">Balloon Decor</a>
+              <a href="#decorations" data-package="Canopy Decoration" data-price="1299">Canopy Decoration</a>
+              <a href="#decorations" data-package="Car Boot Decorations" data-price="1499">Car Boot Decorations</a>
+              <a href="#decorations" data-package="Room Decoration" data-price="1199">Room Decoration</a>
+              <a href="#decorations" data-package="Premium Decoration" data-price="2499">Premium Decoration</a>
+            </div>
+          </div>
+
+          <div class="nav-item has-dropdown" data-nav-item>
+            <button class="nav-drop-trigger" type="button" aria-expanded="false">
+              Anniversary <span class="nav-caret" aria-hidden="true"></span>
+            </button>
+            <div class="nav-dropdown">
+              <a href="#decorations" data-package="Anniversary Decor" data-price="1499">Anniversary Decor</a>
+              <a href="#decorations" data-package="Candlelight Setup" data-price="1799">Candlelight Setup</a>
+              <a href="#decorations" data-package="Room Surprise" data-price="1299">Room Surprise</a>
+              <a href="#decorations" data-package="Premium Anniversary" data-price="2999">Premium Anniversary</a>
+            </div>
+          </div>
+
+          <div class="nav-item has-dropdown" data-nav-item>
+            <button class="nav-drop-trigger" type="button" aria-expanded="false">
+              Baby Shower <span class="nav-caret" aria-hidden="true"></span>
+            </button>
+            <div class="nav-dropdown">
+              <a href="#decorations" data-package="Baby Shower Decor" data-price="2499">Baby Shower Decor</a>
+              <a href="#decorations" data-package="Godh Bharai Setup" data-price="2799">Godh Bharai Setup</a>
+              <a href="#decorations" data-package="Theme Backdrop" data-price="1999">Theme Backdrop</a>
+            </div>
+          </div>
+
+          <div class="nav-item" data-nav-item>
+            <button class="nav-drop-trigger" type="button" aria-expanded="false">
+              House Warming <span class="nav-caret" aria-hidden="true"></span>
+            </button>
+          </div>
+
+          <div class="nav-item has-dropdown" data-nav-item>
+            <button class="nav-drop-trigger" type="button" aria-expanded="false">
+              Engagement <span class="nav-caret" aria-hidden="true"></span>
+            </button>
+            <div class="nav-dropdown">
+              <a href="#decorations" data-package="Engagement Decor" data-price="2999">Engagement Decor</a>
+              <a href="#decorations" data-package="Haldi Decor" data-price="2499">Haldi Decor</a>
+              <a href="#decorations" data-package="Mehendi Decor" data-price="2699">Mehendi Decor</a>
+              <a href="#decorations" data-package="Reception Stage" data-price="4999">Reception Stage</a>
+            </div>
+          </div>
+
+          <div class="nav-item" data-nav-item>
+            <a href="#packages">Festival</a>
+          </div>
+
+          <div class="nav-item" data-nav-item>
+            <a href="#about">Join Us</a>
+          </div>
         </nav>
+
+        <button class="hamburger-btn" id="hamburgerBtn" type="button" aria-label="Open menu" aria-expanded="false" aria-controls="publicNav">
+          <span></span><span></span><span></span>
+        </button>
         <div class="top-actions" id="publicActions">
           <button class="pill-button" type="button" data-open-booking data-package="Birthday Decoration" data-price="999">Book Now</button>
           <a class="call-button" href="tel:+919876543210" aria-label="Call Decor My Space">Call</a>

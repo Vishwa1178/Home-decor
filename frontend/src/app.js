@@ -97,6 +97,69 @@ renderRoute();
 setMinimumBookingDate();
 renderFirebaseNotice();
 
+// ─── Hamburger / dropdown navigation ──────────────────────────────────────────
+const hamburgerBtn = document.querySelector("#hamburgerBtn");
+const navItems     = document.querySelectorAll("[data-nav-item]");
+
+hamburgerBtn?.addEventListener("click", () => {
+  const open = document.documentElement.classList.toggle("nav-open");
+  hamburgerBtn.setAttribute("aria-expanded", String(open));
+  hamburgerBtn.setAttribute("aria-label", open ? "Close menu" : "Open menu");
+  if (!open) navItems.forEach(item => closeDropdown(item));
+});
+
+function closeDropdown(item) {
+  item.classList.remove("open");
+  item.querySelector(".nav-drop-trigger")?.setAttribute("aria-expanded", "false");
+}
+
+function closeMobileNav() {
+  document.documentElement.classList.remove("nav-open");
+  hamburgerBtn?.setAttribute("aria-expanded", "false");
+  hamburgerBtn?.setAttribute("aria-label", "Open menu");
+}
+
+navItems.forEach(item => {
+  const trigger = item.querySelector(".nav-drop-trigger");
+  if (!trigger) return;
+
+  trigger.addEventListener("click", () => {
+    const willOpen = !item.classList.contains("open");
+    navItems.forEach(other => other !== item && closeDropdown(other));
+    item.classList.toggle("open", willOpen);
+    trigger.setAttribute("aria-expanded", String(willOpen));
+  });
+});
+
+document.addEventListener("click", e => {
+  if (!e.target.closest("[data-nav-item]")) {
+    navItems.forEach(item => closeDropdown(item));
+  }
+});
+
+document.addEventListener("keydown", e => {
+  if (e.key === "Escape") {
+    navItems.forEach(item => closeDropdown(item));
+    if (document.documentElement.classList.contains("nav-open")) closeMobileNav();
+  }
+});
+
+document.querySelectorAll(".nav-dropdown a[data-package]").forEach(link => {
+  link.addEventListener("click", e => {
+    e.preventDefault();
+    lastBookingTrigger = link;
+    openBooking(link.dataset.package, Number(link.dataset.price || 999));
+    closeMobileNav();
+    navItems.forEach(item => closeDropdown(item));
+  });
+});
+
+window.addEventListener("resize", () => {
+  if (window.innerWidth > 900 && document.documentElement.classList.contains("nav-open")) {
+    closeMobileNav();
+  }
+});
+
 // ─── Booking triggers ─────────────────────────────────────────────────────────
 document.querySelectorAll("[data-open-booking]").forEach(btn => {
   btn.addEventListener("click", () => {
