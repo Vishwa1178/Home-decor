@@ -108,6 +108,8 @@ hamburgerBtn?.addEventListener("click", () => {
   if (!open) navItems.forEach(item => closeDropdown(item));
 });
 
+document.querySelector("#navCloseBtn")?.addEventListener("click", closeMobileNav);
+
 function closeDropdown(item) {
   item.classList.remove("open");
   item.querySelector(".nav-drop-trigger")?.setAttribute("aria-expanded", "false");
@@ -144,7 +146,7 @@ document.addEventListener("keydown", e => {
   }
 });
 
-document.querySelectorAll(".nav-dropdown a[data-package]").forEach(link => {
+document.querySelectorAll(".nav-dropdown a[data-package], .mnav-quick-thumb[data-package]").forEach(link => {
   link.addEventListener("click", e => {
     e.preventDefault();
     lastBookingTrigger = link;
@@ -390,7 +392,7 @@ function loadBookings(fb) {
       console.error(err);
       adminStatus.textContent = "Error loading";
       adminStatus.style.color = "#d91f52";
-      bookingRows.innerHTML = `<tr><td colspan="8" style="color:#d91f52;padding:20px;">${escHtml(friendlyError(err))}</td></tr>`;
+      bookingRows.innerHTML = `<tr><td colspan="9" style="color:#d91f52;padding:20px;">${escHtml(friendlyError(err))}</td></tr>`;
     }
   );
 }
@@ -409,7 +411,7 @@ function renderBookings(bookings) {
   todayBookings.textContent = bookings.filter(b => b.date === today).length;
 
   if (!list.length) {
-    bookingRows.innerHTML = `<tr><td colspan="8" style="padding:30px;text-align:center;color:#686a75;">${bookings.length ? "No bookings match your search." : "No bookings yet."}</td></tr>`;
+    bookingRows.innerHTML = `<tr><td colspan="9" style="padding:30px;text-align:center;color:#686a75;">${bookings.length ? "No bookings match your search." : "No bookings yet."}</td></tr>`;
     return;
   }
 
@@ -425,6 +427,7 @@ function renderBookings(bookings) {
       <td><strong>${escHtml(b.package || "Custom")}</strong><br/><small>${formatMoney(b.packagePrice)}</small></td>
       <td><strong>${escHtml(b.paymentType || "—")}</strong><br/><small>${formatMoney(b.payableAmount)} via ${escHtml(b.paymentMethod || "—")}</small></td>
       <td>${escHtml(b.date || "—")}<br/><small>${escHtml(b.time || "")}</small></td>
+      <td>${escHtml(b.balloonColor || "—")}</td>
       <td>${escHtml(b.address || "—")}</td>
       <td>${escHtml(b.notes || "—")}</td>
       <td>${statusBadge}<br/><small style="color:#686a75;font-size:11px;">${createdAt}</small></td>
@@ -443,7 +446,7 @@ function statusBadgeHtml(status) {
 }
 
 function bookingMatchesSearch(b, q) {
-  return [b.name, b.phone, b.email, b.package, b.occasion, b.address, b.notes, b.date]
+  return [b.name, b.phone, b.email, b.package, b.occasion, b.balloonColor, b.address, b.notes, b.date]
     .some(v => String(v || "").toLowerCase().includes(q));
 }
 

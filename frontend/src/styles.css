@@ -1301,29 +1301,220 @@ tbody tr:hover {
   transform: translateY(-7px) rotate(-45deg);
 }
 
+/* ─── Mobile drawer: header banner / quick categories / footer ─── */
+.mnav-header,
+.mnav-quick-cats,
+.mnav-footer {
+  display: none;
+}
+
+.mnav-list {
+  display: contents;
+}
+
 @media (max-width: 900px) {
   .hamburger-btn {
     display: flex;
+    margin-left: auto;
+  }
+
+  .top-actions,
+  .call-button {
+    display: none;
   }
 
   .nav-links {
     position: fixed;
     inset: 0 0 0 auto;
     top: 0;
-    width: min(320px, 84vw);
+    width: min(320px, 86vw);
     height: 100vh;
+    display: flex;
     flex-direction: column;
     align-items: stretch;
     justify-content: flex-start;
     gap: 0;
-    padding: 88px 20px 24px;
+    padding: 0;
     background: #fff;
     box-shadow: -18px 0 40px rgba(34, 20, 25, 0.16);
     transform: translateX(100%);
     transition: transform 260ms ease;
-    overflow-y: auto;
+    overflow: hidden;
     z-index: 60;
     order: unset;
+  }
+
+  /* Header banner */
+  .mnav-header {
+    display: block;
+    flex: none;
+    padding: 20px 18px 22px;
+    background: linear-gradient(135deg, var(--pink) 0%, var(--pink-dark) 100%);
+    color: #fff;
+  }
+
+  .mnav-brand-row {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 12px;
+  }
+
+  .mnav-brand-text {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
+
+  .mnav-brand-text strong {
+    font-size: 19px;
+    font-weight: 800;
+    letter-spacing: 0.2px;
+  }
+
+  .mnav-brand-text small {
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.6px;
+    color: rgba(255, 255, 255, 0.85);
+  }
+
+  .mnav-header .nav-close-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 32px;
+    height: 32px;
+    margin: 0;
+    border: none;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.18);
+    color: #fff;
+    font-size: 14px;
+  }
+
+  /* Quick category thumbnails */
+  .mnav-quick-cats {
+    display: block;
+    flex: none;
+    padding: 16px 18px 4px;
+  }
+
+  .mnav-quick-label {
+    display: block;
+    font-size: 11px;
+    font-weight: 800;
+    letter-spacing: 0.8px;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 10px;
+  }
+
+  .mnav-quick-thumbs {
+    display: flex;
+    gap: 14px;
+  }
+
+  .mnav-quick-thumb {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 6px;
+    width: 74px;
+    text-align: center;
+  }
+
+  .mnav-quick-thumb img {
+    width: 62px;
+    height: 62px;
+    border-radius: 14px;
+    object-fit: cover;
+  }
+
+  .mnav-quick-thumb span {
+    font-size: 11.5px;
+    font-weight: 600;
+    color: var(--ink);
+    line-height: 1.25;
+  }
+
+  /* Scrollable accordion list */
+  .mnav-list {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    overflow-y: auto;
+    padding: 8px 18px 12px;
+    border-top: 1px solid var(--line);
+  }
+
+  /* Footer: WhatsApp + Contact */
+  .mnav-footer {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    flex: none;
+    padding: 14px 18px 20px;
+    border-top: 1px solid var(--line);
+    background: #fafbfc;
+  }
+
+  .mnav-whatsapp {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 12px 14px;
+    border-radius: 14px;
+    background: #e8f8ef;
+  }
+
+  .mnav-whatsapp-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    background: #fff;
+    flex: none;
+  }
+
+  .mnav-whatsapp-text {
+    display: flex;
+    flex-direction: column;
+    gap: 1px;
+  }
+
+  .mnav-whatsapp-text strong {
+    font-size: 13.5px;
+    font-weight: 800;
+    color: #128c4a;
+  }
+
+  .mnav-whatsapp-text small {
+    font-size: 11.5px;
+    color: #4c8f6a;
+  }
+
+  .mnav-contact {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 6px 14px;
+    font-size: 13.5px;
+    font-weight: 600;
+    color: var(--ink);
+  }
+
+  .mnav-contact-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 26px;
+    height: 26px;
+    border-radius: 50%;
+    background: #eef0f3;
+    flex: none;
   }
 
   html.nav-open .nav-links {
@@ -1346,13 +1537,20 @@ tbody tr:hover {
   .nav-drop-trigger {
     width: 100%;
     justify-content: space-between;
-    padding: 15px 4px;
+    padding: 17px 2px;
     border-bottom: 1px solid var(--line);
     font-size: 15px;
   }
 
+  .mnav-list > .nav-item:last-child > a,
+  .mnav-list > .nav-item:last-child > .nav-drop-trigger {
+    border-bottom: none;
+  }
+
+  .nav-item.open .nav-dropdown,
   .nav-dropdown {
     position: static;
+    left: auto;
     transform: none;
     opacity: 1;
     visibility: visible;
@@ -1392,7 +1590,28 @@ tbody tr:hover {
   .nav-dropdown a::before {
     margin-top: 7px;
   }
+
+  .nav-close-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    align-self: flex-end;
+    width: 34px;
+    height: 34px;
+    margin-bottom: 12px;
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    background: #fff;
+    font-size: 16px;
+    color: var(--ink);
+    cursor: pointer;
+  }
 }
+
+.nav-close-btn {
+  display: none;
+}
+
 
 @media (max-width: 1100px) {
   .topbar {
@@ -1401,6 +1620,7 @@ tbody tr:hover {
   }
 
   .nav-links {
+    
     order: 3;
     flex-basis: 100%;
     overflow-x: auto;
@@ -1490,25 +1710,6 @@ tbody tr:hover {
   }
 
   .call-button {
-    display: none;
-  }
-
-  .nav-links {
-    gap: 10px;
-    font-size: 13px;
-    padding: 4px 0 2px;
-    scrollbar-width: none;
-  }
-
-  .nav-links a {
-    flex: 0 0 auto;
-    padding: 10px 12px;
-    border: 1px solid var(--line);
-    border-radius: 999px;
-    background: #fff;
-  }
-
-  .nav-links::-webkit-scrollbar {
     display: none;
   }
 
@@ -1942,5 +2143,17 @@ tbody tr:hover {
 
   .booking-copy h2 {
     font-size: 30px;
+  }
+}
+
+@media (max-width: 400px) {
+  .nav-links {
+    width: 88vw;
+    padding-left: 16px;
+    padding-right: 16px;
+  }
+
+  .nav-dropdown a {
+    font-size: 13.5px;
   }
 }
