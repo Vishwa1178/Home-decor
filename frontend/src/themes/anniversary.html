@@ -1,0 +1,158 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Anniversary Decoration Packages — Decor My Space</title>
+    <meta name="description" content="Romantic setups and candlelight surprises to celebrate every year together." />
+    <link rel="stylesheet" href="../styles.css" />
+    <link rel="stylesheet" href="../themes.css" />
+  </head>
+  <body>
+    <div class="site-shell">
+      <header class="topbar theme-topbar">
+        <a class="brand" href="/">
+          <span class="brand-mark">DM</span>
+          <span>
+            <strong>Decor My Space</strong>
+            <small>HOME DECOR</small>
+          </span>
+        </a>
+        <a class="theme-back" href="/">&larr; Back to Home</a>
+      </header>
+
+      <main>
+        <section class="theme-hero">
+          <span class="eyebrow">Anniversary</span>
+          <h1>Anniversary Decoration Packages</h1>
+          <p>Romantic setups and candlelight surprises to celebrate every year together.</p>
+        </section>
+
+        <section class="theme-grid">
+      <a class="theme-card" href="#" data-open-booking data-package="Anniversary Decor" data-price="1499">
+        <div class="theme-card-img">
+          <img src="./images/anniversary/anniversary-decor.jpg" alt="Anniversary Decor" loading="lazy" />
+        </div>
+        <div class="theme-card-body">
+          <strong class="theme-card-name">Anniversary Decor</strong>
+          <span class="theme-card-price">Rs. 1,499</span>
+        </div>
+      </a>
+      <a class="theme-card" href="#" data-open-booking data-package="Candlelight Setup" data-price="1799">
+        <div class="theme-card-img">
+          <img src="./images/anniversary/candlelight-setup.jpg" alt="Candlelight Setup" loading="lazy" />
+        </div>
+        <div class="theme-card-body">
+          <strong class="theme-card-name">Candlelight Setup</strong>
+          <span class="theme-card-price">Rs. 1,799</span>
+        </div>
+      </a>
+      <a class="theme-card" href="#" data-open-booking data-package="Room Surprise" data-price="1299">
+        <div class="theme-card-img">
+          <img src="./images/anniversary/room-surprise.jpg" alt="Room Surprise" loading="lazy" />
+        </div>
+        <div class="theme-card-body">
+          <strong class="theme-card-name">Room Surprise</strong>
+          <span class="theme-card-price">Rs. 1,299</span>
+        </div>
+      </a>
+      <a class="theme-card" href="#" data-open-booking data-package="Premium Anniversary" data-price="2999">
+        <div class="theme-card-img">
+          <img src="./images/anniversary/premium-anniversary.jpg" alt="Premium Anniversary" loading="lazy" />
+        </div>
+        <div class="theme-card-body">
+          <strong class="theme-card-name">Premium Anniversary</strong>
+          <span class="theme-card-price">Rs. 2,999</span>
+        </div>
+      </a>
+        </section>
+      </main>
+
+      <!-- Booking Modal -->
+      <div class="booking-modal" id="bookingModal" aria-hidden="true">
+        <div class="booking-dialog" role="dialog" aria-modal="true" aria-labelledby="bookingTitle">
+          <button class="modal-close" type="button" id="closeBooking" aria-label="Close booking">x</button>
+          <aside class="checkout-summary">
+            <span class="eyebrow">Selected package</span>
+            <h2 id="bookingTitle">Complete Your Booking</h2>
+            <div class="selected-package">
+              <small>Package</small>
+              <strong id="selectedPackageName">Birthday Decoration</strong>
+              <span id="selectedPackagePrice">Rs. 999</span>
+            </div>
+            <div class="payment-note">
+              <strong>Secure Booking</strong>
+              <p>Your booking details are saved securely. Admin will confirm your slot shortly.</p>
+            </div>
+          </aside>
+          <form class="booking-form checkout-form" id="bookingForm">
+            <div class="firebase-alert" id="firebaseAlert"></div>
+            <input type="hidden" name="package" id="packageSelect" value="Birthday Decoration" />
+            <input type="hidden" name="packagePrice" id="packagePrice" value="999" />
+            <input type="hidden" name="payableAmount" id="payableAmountInput" value="500" />
+            <div class="form-row">
+              <label>Full Name<input required name="name" autocomplete="name" placeholder="Your name" minlength="2" /></label>
+              <label>Phone<input required name="phone" autocomplete="tel" inputmode="tel" placeholder="+91 98765 43210" pattern="[0-9+ ]{10,16}" /></label>
+            </div>
+            <div class="form-row">
+              <label>Email<input name="email" type="email" autocomplete="email" placeholder="you@example.com" /></label>
+              <label>Decoration Type<select name="occasion">
+                <option>Birthday</option>
+                <option>Anniversary</option>
+                <option>Baby Shower</option>
+                <option>House Warming</option>
+                <option>Engagement</option>
+                <option>Festival</option>
+                <option>Custom</option>
+              </select></label>
+            </div>
+            <div class="form-row">
+              <label>Date<input required name="date" type="date" /></label>
+              <label>Time<input required name="time" type="time" /></label>
+            </div>
+            <label>Balloon Color<input name="balloonColor" placeholder="e.g. Red, Gold &amp; White" /></label>
+            <label>Address<textarea required name="address" rows="3" placeholder="Complete decoration address"></textarea></label>
+            <div class="payment-section">
+              <div class="payment-head">
+                <strong>Payment Preference</strong>
+                <span id="payableAmount">Payable now: Rs. 500</span>
+              </div>
+              <div class="payment-options">
+                <label class="payment-option">
+                  <input type="radio" name="paymentType" value="Advance" checked />
+                  <span><strong>Advance</strong><small>Reserve booking now</small></span>
+                </label>
+                <label class="payment-option">
+                  <input type="radio" name="paymentType" value="Full Payment" />
+                  <span><strong>Full Payment</strong><small>Pay complete package amount</small></span>
+                </label>
+              </div>
+              <label>Payment Method<select name="paymentMethod">
+                <option>Razorpay Online</option>
+                <option>UPI</option>
+                <option>Cash after confirmation</option>
+              </select></label>
+            </div>
+            <label>Notes<textarea name="notes" rows="3" placeholder="Theme colors, room size, occasion details"></textarea></label>
+            <button class="primary-button" type="submit">Submit Booking</button>
+            <p class="form-status" id="bookingStatus" role="status"></p>
+          </form>
+        </div>
+      </div>
+
+      <footer class="footer">
+        <div>
+          <strong>Decor My Space</strong>
+          <p>We create beautiful memories with decoration made for your home.</p>
+        </div>
+        <div>
+          <strong>Contact Us</strong>
+          <p>+91 98765 43210<br />hello@decormyspace.com<br />Bangalore, Karnataka</p>
+        </div>
+        <a class="whatsapp" href="https://wa.me/919876543210" aria-label="WhatsApp">WA</a>
+      </footer>
+    </div>
+
+   <script type="module" src="/src/theme_booking.js"></script>
+  </body>
+</html>

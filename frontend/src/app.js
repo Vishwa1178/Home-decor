@@ -146,7 +146,18 @@ document.addEventListener("keydown", e => {
   }
 });
 
-document.querySelectorAll(".nav-dropdown a[data-package], .mnav-quick-thumb[data-package]").forEach(link => {
+// Dropdown links now navigate to their theme page (e.g. birthday.html) —
+// only close the open mobile drawer/dropdown state, don't block navigation.
+document.querySelectorAll(".nav-dropdown a").forEach(link => {
+  link.addEventListener("click", () => {
+    closeMobileNav();
+    navItems.forEach(item => closeDropdown(item));
+  });
+});
+
+// Quick-category thumbnails in the mobile drawer still link to an in-page
+// anchor (#decorations), so they open the booking modal directly.
+document.querySelectorAll(".mnav-quick-thumb[data-package]").forEach(link => {
   link.addEventListener("click", e => {
     e.preventDefault();
     lastBookingTrigger = link;
