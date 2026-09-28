@@ -16,6 +16,10 @@ const mimeTypes = {
   ".svg": "image/svg+xml"
 };
 
+// Only these files are served. The repo root also contains backend/, server.js,
+// package.json, docs and possibly .env files, none of which may be exposed.
+const publicFiles = new Set(["index.html", "app.js", "styles.css", "firebase-config.js"]);
+
 const securityHeaders = {
   "X-Content-Type-Options": "nosniff",
   "X-Frame-Options": "SAMEORIGIN",
@@ -30,8 +34,15 @@ const server = http.createServer((request, response) => {
     return;
   }
 
-  const url = new URL(request.url, `http://${request.headers.host}`);
-  const pathname = decodeURIComponent(url.pathname);
+  let pathname;
+  try {
+    const url = new URL(request.url, `http://${request.headers.host}`);
+    pathname = decodeURIComponent(url.pathname);
+  } catch {
+    // Malformed URL or Host header (e.g. "/%E0%A4%A"): reject instead of crashing.
+    send(response, 400, "Bad request", "text/plain; charset=utf-8");
+    return;
+  }
 
   if (pathname === "/health") {
     send(response, 200, "ok", "text/plain; charset=utf-8");
@@ -49,7 +60,7 @@ const server = http.createServer((request, response) => {
     return;
   }
 
-  fs.readFile(filePath, (error, content) => {
+  readPublicFile(filePath, (error, content) => {
     if (error) {
       if (path.extname(filePath)) {
         send(response, 404, "Not found", "text/plain; charset=utf-8");
@@ -69,6 +80,16 @@ const server = http.createServer((request, response) => {
     send(response, 200, content, mimeTypes[path.extname(filePath)] || "application/octet-stream", filePath);
   });
 });
+
+// Reads a file only if it is on the public allowlist; anything else behaves
+// exactly like a missing file (404 for paths with an extension, SPA fallback otherwise).
+function readPublicFile(filePath, callback) {
+  if (!publicFiles.has(path.relative(root, filePath))) {
+    callback(Object.assign(new Error("Not a public file"), { code: "ENOENT" }));
+    return;
+  }
+  fs.readFile(filePath, callback);
+}
 
 function send(response, statusCode, body, contentType, filePath = "") {
   const isAsset = filePath && path.extname(filePath) && !filePath.endsWith(".html");

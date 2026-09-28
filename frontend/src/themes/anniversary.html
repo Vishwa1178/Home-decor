@@ -29,40 +29,40 @@
         </section>
 
         <section class="theme-grid">
-      <a class="theme-card" href="#" data-open-booking data-package="Anniversary Decor" data-price="1499">
+      <a class="theme-card" href="#" data-open-booking data-package-id="anniversary-decor">
         <div class="theme-card-img">
           <img src="./images/anniversary/anniversary-decor.jpg" alt="Anniversary Decor" loading="lazy" />
         </div>
         <div class="theme-card-body">
           <strong class="theme-card-name">Anniversary Decor</strong>
-          <span class="theme-card-price">Rs. 1,499</span>
+          <span class="theme-card-price" data-price-of="anniversary-decor">Rs. 1,499</span>
         </div>
       </a>
-      <a class="theme-card" href="#" data-open-booking data-package="Candlelight Setup" data-price="1799">
+      <a class="theme-card" href="#" data-open-booking data-package-id="candlelight-setup">
         <div class="theme-card-img">
           <img src="./images/anniversary/candlelight-setup.jpg" alt="Candlelight Setup" loading="lazy" />
         </div>
         <div class="theme-card-body">
           <strong class="theme-card-name">Candlelight Setup</strong>
-          <span class="theme-card-price">Rs. 1,799</span>
+          <span class="theme-card-price" data-price-of="candlelight-setup">Rs. 1,799</span>
         </div>
       </a>
-      <a class="theme-card" href="#" data-open-booking data-package="Room Surprise" data-price="1299">
+      <a class="theme-card" href="#" data-open-booking data-package-id="room-surprise">
         <div class="theme-card-img">
           <img src="./images/anniversary/room-surprise.jpg" alt="Room Surprise" loading="lazy" />
         </div>
         <div class="theme-card-body">
           <strong class="theme-card-name">Room Surprise</strong>
-          <span class="theme-card-price">Rs. 1,299</span>
+          <span class="theme-card-price" data-price-of="room-surprise">Rs. 1,299</span>
         </div>
       </a>
-      <a class="theme-card" href="#" data-open-booking data-package="Premium Anniversary" data-price="2999">
+      <a class="theme-card" href="#" data-open-booking data-package-id="premium-anniversary">
         <div class="theme-card-img">
           <img src="./images/anniversary/premium-anniversary.jpg" alt="Premium Anniversary" loading="lazy" />
         </div>
         <div class="theme-card-body">
           <strong class="theme-card-name">Premium Anniversary</strong>
-          <span class="theme-card-price">Rs. 2,999</span>
+          <span class="theme-card-price" data-price-of="premium-anniversary">Rs. 2,999</span>
         </div>
       </a>
         </section>
@@ -87,9 +87,7 @@
           </aside>
           <form class="booking-form checkout-form" id="bookingForm">
             <div class="firebase-alert" id="firebaseAlert"></div>
-            <input type="hidden" name="package" id="packageSelect" value="Birthday Decoration" />
-            <input type="hidden" name="packagePrice" id="packagePrice" value="999" />
-            <input type="hidden" name="payableAmount" id="payableAmountInput" value="500" />
+            <input type="hidden" name="packageId" id="packageSelect" value="birthday-decor" />
             <div class="form-row">
               <label>Full Name<input required name="name" autocomplete="name" placeholder="Your name" minlength="2" /></label>
               <label>Phone<input required name="phone" autocomplete="tel" inputmode="tel" placeholder="+91 98765 43210" pattern="[0-9+ ]{10,16}" /></label>
@@ -108,30 +106,36 @@
             </div>
             <div class="form-row">
               <label>Date<input required name="date" type="date" /></label>
-              <label>Time<input required name="time" type="time" /></label>
+              <label>Time<select required name="slotId" id="slotSelect" disabled><option value="">Choose a date first</option></select></label>
             </div>
             <label>Balloon Color<input name="balloonColor" placeholder="e.g. Red, Gold &amp; White" /></label>
             <label>Address<textarea required name="address" rows="3" placeholder="Complete decoration address"></textarea></label>
             <div class="payment-section">
               <div class="payment-head">
                 <strong>Payment Preference</strong>
-                <span id="payableAmount">Payable now: Rs. 500</span>
+                <span id="payableAmount"></span>
               </div>
               <div class="payment-options">
                 <label class="payment-option">
-                  <input type="radio" name="paymentType" value="Advance" checked />
-                  <span><strong>Advance</strong><small>Reserve booking now</small></span>
+                  <input type="radio" name="paymentOption" value="HALF" checked />
+                  <span><strong>Pay 50% Advance</strong><small id="halfOptionHint">Half of the package price</small></span>
                 </label>
                 <label class="payment-option">
-                  <input type="radio" name="paymentType" value="Full Payment" />
-                  <span><strong>Full Payment</strong><small>Pay complete package amount</small></span>
+                  <input type="radio" name="paymentOption" value="FULL" />
+                  <span><strong>Pay Full Amount</strong><small id="fullOptionHint">The complete package price</small></span>
                 </label>
               </div>
               <label>Payment Method<select name="paymentMethod">
-                <option>Razorpay Online</option>
-                <option>UPI</option>
-                <option>Cash after confirmation</option>
+                <option value="RAZORPAY">Razorpay Online</option>
+                <option value="UPI">UPI</option>
+                <option value="CASH">Cash after confirmation</option>
               </select></label>
+              <div class="payment-summary" id="paymentSummary" aria-live="polite" hidden>
+                <div><span>Package total</span><strong id="summaryTotal"></strong></div>
+                <div class="due"><span>Amount to pay</span><strong id="summaryRequired"></strong></div>
+                <div><span>Remaining balance</span><strong id="summaryRemaining"></strong></div>
+                <p>No payment is taken when you submit this request.</p>
+              </div>
             </div>
             <label>Notes<textarea name="notes" rows="3" placeholder="Theme colors, room size, occasion details"></textarea></label>
             <button class="primary-button" type="submit">Submit Booking</button>

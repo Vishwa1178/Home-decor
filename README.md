@@ -46,10 +46,19 @@ curl http://localhost:5000/health
 | Method | Path                    | Description                              |
 | ------ | ----------------------- | ---------------------------------------- |
 | GET    | `/health`               | Service liveness + metadata              |
-| GET    | `/api/bookings/packages`| List decoration packages                 |
-| POST   | `/api/bookings/validate`| Server-side validation for booking form  |
+| GET    | `/api/packages`         | The central package catalog (active packages, prices, categories) |
+| GET    | `/api/packages/:id`     | One active package |
+| GET    | `/api/availability?date=YYYY-MM-DD` | Bookable time slots for a date with remaining capacity (never cached) |
+| POST   | `/api/bookings`         | Create a booking (idempotent on `requestId`; server-side pricing; reserves a slot seat in the same transaction) |
+| POST   | `/api/bookings/validate`| Dry run of the above: validates and quotes, writes nothing |
+| GET    | `/api/bookings/packages`| Alias of `GET /api/packages` (compatibility) |
+| GET    | `/api/admin/me`         | Admin check: needs `Authorization: Bearer <Firebase ID token>` with the `admin` custom claim (401 no/invalid token, 403 not admin) |
+| GET/PATCH/POST | `/api/admin/bookings…`, `/stats` | Admin: paginated/filterable/searchable bookings, detail, status changes, reschedule (all audited) |
+| GET/POST/PATCH | `/api/admin/catalog`, `/packages…` | Admin: list, add, edit, re-price, enable/disable packages (audited) |
+| GET/POST/PATCH/PUT/DELETE | `/api/admin/slots…`, `/blocked-dates…` | Admin: slots, capacity, blocked dates, booked capacity (audited) |
+| GET    | `/api/admin/audit`      | Admin: the audit trail (read-only) |
 
-Firestore reads/writes still happen through the Firebase Web SDK on the client (unchanged behavior), governed by Firestore security rules in the Firebase console.
+Bookings are created only by the backend (`POST /api/bookings`, Firebase Admin SDK); the browser never writes to Firestore and never sends a price. The admin dashboard reads live bookings through the Firebase Web SDK. Access is governed by the version-controlled `firestore.rules` and by the `admin` custom claim (see `docs/PHASE1.md`). See `docs/PHASE2.md` for the catalog and booking design and `docs/PHASE3.md` for the payment model: the customer picks `paymentOption` `HALF` (50%, rounded up to whole rupees) or `FULL`, and the server calculates `totalAmount`, `requiredAmount` and `remainingAmount`. No payment provider is integrated yet: every booking is `paymentStatus: PENDING` with nothing paid. See `docs/PHASE5.md` for the admin management system (paginated bookings, packages, slots, audit trail). See `docs/PHASE4.md` for time slots: customers pick one of the backend's slots (no free-form time), and capacity is reserved in the booking transaction so a slot can never be double-booked.
 
 ## Environment variables
 

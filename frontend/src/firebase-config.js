@@ -23,7 +23,7 @@ export const firebaseConfig = {
   measurementId: env.VITE_FIREBASE_MEASUREMENT_ID || undefined,
 };
 
-export const ADMIN_EMAIL = required("VITE_ADMIN_EMAIL");
-
-// Base URL for the backend REST API (Express service on Render).
-export const API_BASE_URL = env.VITE_API_URL || "";
+// Base URL for the backend REST API (Express service on Render), no trailing slash.
+// Admin authorization is decided by this API (verified ID token + `admin` custom
+// claim), not by anything in the browser. There is intentionally no admin email here.
+export const API_BASE_URL = (env.VITE_API_URL || "").replace(/\/+$/, "");

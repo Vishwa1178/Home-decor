@@ -1,0 +1,9 @@
+{
+  "_comment": "Initial booking slots. The project had no fixed slots before (the form used a free-form time picker), so these are the four slots specified for this phase: capacity 1 per date, every day, all enabled. Once loaded into Firestore (scripts/seed-slots.js), Firestore is the source of truth and this file only seeds it.",
+  "slots": [
+    { "id": "t1000", "time": "10:00", "label": "10:00 AM", "capacity": 1, "enabled": true, "days": [0, 1, 2, 3, 4, 5, 6], "sortOrder": 10 },
+    { "id": "t1300", "time": "13:00", "label": "1:00 PM",  "capacity": 1, "enabled": true, "days": [0, 1, 2, 3, 4, 5, 6], "sortOrder": 20 },
+    { "id": "t1600", "time": "16:00", "label": "4:00 PM",  "capacity": 1, "enabled": true, "days": [0, 1, 2, 3, 4, 5, 6], "sortOrder": 30 },
+    { "id": "t1900", "time": "19:00", "label": "7:00 PM",  "capacity": 1, "enabled": true, "days": [0, 1, 2, 3, 4, 5, 6], "sortOrder": 40 }
+  ]
+}

@@ -1,0 +1,408 @@
+{
+  "_comment": "Initial catalog extracted from the existing frontend pages (index.html and src/themes/*.html). Prices are the prices the site already showed. Once loaded into Firestore, Firestore is the source of truth and this file is only used by scripts/seed-catalog.js.",
+  "categories": [
+    {
+      "id": "birthday",
+      "name": "Birthday",
+      "description": "Balloon arches, canopies, and room makeovers to make their birthday unforgettable.",
+      "active": true,
+      "sortOrder": 10
+    },
+    {
+      "id": "anniversary",
+      "name": "Anniversary",
+      "description": "Romantic setups and candlelight surprises to celebrate every year together.",
+      "active": true,
+      "sortOrder": 20
+    },
+    {
+      "id": "baby-shower",
+      "name": "Baby Shower",
+      "description": "Sweet, welcoming decor for godh bharai and baby shower celebrations.",
+      "active": true,
+      "sortOrder": 30
+    },
+    {
+      "id": "house-warming",
+      "name": "House Warming",
+      "description": "Traditional entrance decor and pooja setups to welcome you into your new home.",
+      "active": true,
+      "sortOrder": 40
+    },
+    {
+      "id": "engagement",
+      "name": "Engagement",
+      "description": "Elegant stages and backdrops for engagements, haldi, mehendi and receptions.",
+      "active": true,
+      "sortOrder": 50
+    },
+    {
+      "id": "festival",
+      "name": "Festival",
+      "description": "Bring festive cheer home with lighting, rangoli and traditional decor.",
+      "active": true,
+      "sortOrder": 60
+    },
+    {
+      "id": "custom",
+      "name": "Custom",
+      "description": "",
+      "active": true,
+      "sortOrder": 70
+    }
+  ],
+  "packages": [
+    {
+      "id": "birthday-decor",
+      "category": "birthday",
+      "name": "Birthday Decor",
+      "price": 999,
+      "description": "",
+      "image": null,
+      "active": true,
+      "featured": false,
+      "sortOrder": 10
+    },
+    {
+      "id": "balloon-decor",
+      "category": "birthday",
+      "name": "Balloon Decor",
+      "price": 899,
+      "description": "",
+      "image": null,
+      "active": true,
+      "featured": false,
+      "sortOrder": 20
+    },
+    {
+      "id": "canopy-decoration",
+      "category": "birthday",
+      "name": "Canopy Decoration",
+      "price": 1299,
+      "description": "",
+      "image": null,
+      "active": true,
+      "featured": false,
+      "sortOrder": 30
+    },
+    {
+      "id": "car-boot-decorations",
+      "category": "birthday",
+      "name": "Car Boot Decorations",
+      "price": 1499,
+      "description": "",
+      "image": null,
+      "active": true,
+      "featured": false,
+      "sortOrder": 40
+    },
+    {
+      "id": "room-decoration",
+      "category": "birthday",
+      "name": "Room Decoration",
+      "price": 1199,
+      "description": "",
+      "image": null,
+      "active": true,
+      "featured": false,
+      "sortOrder": 50
+    },
+    {
+      "id": "premium-decoration",
+      "category": "birthday",
+      "name": "Premium Decoration",
+      "price": 2499,
+      "description": "",
+      "image": null,
+      "active": true,
+      "featured": false,
+      "sortOrder": 60
+    },
+    {
+      "id": "anniversary-decor",
+      "category": "anniversary",
+      "name": "Anniversary Decor",
+      "price": 1499,
+      "description": "",
+      "image": null,
+      "active": true,
+      "featured": false,
+      "sortOrder": 10
+    },
+    {
+      "id": "candlelight-setup",
+      "category": "anniversary",
+      "name": "Candlelight Setup",
+      "price": 1799,
+      "description": "",
+      "image": null,
+      "active": true,
+      "featured": false,
+      "sortOrder": 20
+    },
+    {
+      "id": "room-surprise",
+      "category": "anniversary",
+      "name": "Room Surprise",
+      "price": 1299,
+      "description": "",
+      "image": null,
+      "active": true,
+      "featured": false,
+      "sortOrder": 30
+    },
+    {
+      "id": "premium-anniversary",
+      "category": "anniversary",
+      "name": "Premium Anniversary",
+      "price": 2999,
+      "description": "",
+      "image": null,
+      "active": true,
+      "featured": false,
+      "sortOrder": 40
+    },
+    {
+      "id": "baby-shower-decor",
+      "category": "baby-shower",
+      "name": "Baby Shower Decor",
+      "price": 2499,
+      "description": "",
+      "image": null,
+      "active": true,
+      "featured": false,
+      "sortOrder": 10
+    },
+    {
+      "id": "godh-bharai-setup",
+      "category": "baby-shower",
+      "name": "Godh Bharai Setup",
+      "price": 2799,
+      "description": "",
+      "image": null,
+      "active": true,
+      "featured": false,
+      "sortOrder": 20
+    },
+    {
+      "id": "theme-backdrop",
+      "category": "baby-shower",
+      "name": "Theme Backdrop",
+      "price": 1999,
+      "description": "",
+      "image": null,
+      "active": true,
+      "featured": false,
+      "sortOrder": 30
+    },
+    {
+      "id": "house-warming-decor",
+      "category": "house-warming",
+      "name": "House Warming Decor",
+      "price": 1999,
+      "description": "",
+      "image": null,
+      "active": true,
+      "featured": false,
+      "sortOrder": 10
+    },
+    {
+      "id": "entrance-decoration",
+      "category": "house-warming",
+      "name": "Entrance Decoration",
+      "price": 1299,
+      "description": "",
+      "image": null,
+      "active": true,
+      "featured": false,
+      "sortOrder": 20
+    },
+    {
+      "id": "pooja-setup",
+      "category": "house-warming",
+      "name": "Pooja Setup",
+      "price": 1599,
+      "description": "",
+      "image": null,
+      "active": true,
+      "featured": false,
+      "sortOrder": 30
+    },
+    {
+      "id": "rangoli-and-diya-setup",
+      "category": "house-warming",
+      "name": "Rangoli & Diya Setup",
+      "price": 999,
+      "description": "",
+      "image": null,
+      "active": true,
+      "featured": false,
+      "sortOrder": 40
+    },
+    {
+      "id": "engagement-decor",
+      "category": "engagement",
+      "name": "Engagement Decor",
+      "price": 2999,
+      "description": "",
+      "image": null,
+      "active": true,
+      "featured": false,
+      "sortOrder": 10
+    },
+    {
+      "id": "haldi-decor",
+      "category": "engagement",
+      "name": "Haldi Decor",
+      "price": 2499,
+      "description": "",
+      "image": null,
+      "active": true,
+      "featured": false,
+      "sortOrder": 20
+    },
+    {
+      "id": "mehendi-decor",
+      "category": "engagement",
+      "name": "Mehendi Decor",
+      "price": 2699,
+      "description": "",
+      "image": null,
+      "active": true,
+      "featured": false,
+      "sortOrder": 30
+    },
+    {
+      "id": "reception-stage",
+      "category": "engagement",
+      "name": "Reception Stage",
+      "price": 4999,
+      "description": "",
+      "image": null,
+      "active": true,
+      "featured": false,
+      "sortOrder": 40
+    },
+    {
+      "id": "diwali-decor",
+      "category": "festival",
+      "name": "Diwali Decor",
+      "price": 1799,
+      "description": "",
+      "image": null,
+      "active": true,
+      "featured": false,
+      "sortOrder": 10
+    },
+    {
+      "id": "christmas-decor",
+      "category": "festival",
+      "name": "Christmas Decor",
+      "price": 1999,
+      "description": "",
+      "image": null,
+      "active": true,
+      "featured": false,
+      "sortOrder": 20
+    },
+    {
+      "id": "new-year-decor",
+      "category": "festival",
+      "name": "New Year Decor",
+      "price": 1699,
+      "description": "",
+      "image": null,
+      "active": true,
+      "featured": false,
+      "sortOrder": 30
+    },
+    {
+      "id": "festive-lighting-setup",
+      "category": "festival",
+      "name": "Festive Lighting Setup",
+      "price": 1299,
+      "description": "",
+      "image": null,
+      "active": true,
+      "featured": false,
+      "sortOrder": 40
+    },
+    {
+      "id": "rose-gold-birthday-room-decor",
+      "category": "birthday",
+      "name": "Rose Gold Birthday Room Decor",
+      "price": 2499,
+      "description": "",
+      "image": "https://images.unsplash.com/photo-1602631985686-1bb0e6a8696e?auto=format&fit=crop&w=700&q=80",
+      "active": true,
+      "featured": true,
+      "sortOrder": 70
+    },
+    {
+      "id": "luxury-balloon-canopy-decor",
+      "category": "birthday",
+      "name": "Luxury Balloon Canopy Decor",
+      "price": 3499,
+      "description": "",
+      "image": "https://images.unsplash.com/photo-1530103862676-de8c9debad1d?auto=format&fit=crop&w=700&q=80",
+      "active": true,
+      "featured": true,
+      "sortOrder": 80
+    },
+    {
+      "id": "romantic-anniversary-decoration",
+      "category": "anniversary",
+      "name": "Romantic Anniversary Decoration",
+      "price": 2999,
+      "description": "",
+      "image": "https://images.unsplash.com/photo-1519225421980-715cb0215aed?auto=format&fit=crop&w=700&q=80",
+      "active": true,
+      "featured": true,
+      "sortOrder": 50
+    },
+    {
+      "id": "princess-theme-decoration",
+      "category": "birthday",
+      "name": "Princess Theme Decoration",
+      "price": 2499,
+      "description": "",
+      "image": "https://images.unsplash.com/photo-1527529482837-4698179dc6ce?auto=format&fit=crop&w=700&q=80",
+      "active": true,
+      "featured": true,
+      "sortOrder": 90
+    },
+    {
+      "id": "surprise-birthday-decoration",
+      "category": "birthday",
+      "name": "Surprise Birthday Decoration",
+      "price": 1999,
+      "description": "",
+      "image": "https://images.unsplash.com/photo-1558636508-e0db3814bd1d?auto=format&fit=crop&w=700&q=80",
+      "active": true,
+      "featured": true,
+      "sortOrder": 100
+    },
+    {
+      "id": "festival-decoration",
+      "category": "festival",
+      "name": "Festival Decoration",
+      "price": 1799,
+      "description": "",
+      "image": null,
+      "active": true,
+      "featured": false,
+      "sortOrder": 50
+    },
+    {
+      "id": "custom-home-decoration",
+      "category": "custom",
+      "name": "Custom Home Decoration",
+      "price": 999,
+      "description": "",
+      "image": null,
+      "active": true,
+      "featured": false,
+      "sortOrder": 10
+    }
+  ]
+}

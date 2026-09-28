@@ -1,4 +1,9 @@
-import { firebaseConfig, ADMIN_EMAIL } from "./firebase-config.js";
+import { firebaseConfig, API_BASE_URL } from "./firebase-config.js";
+import { fetchAdminProfile } from "./adminApi.js";
+import { initBookingModal } from "./bookingModal.js";
+import { createAdminApi } from "./admin/api.js";
+import { initAdminDashboard } from "./admin/dashboard.js";
+import { loadAvailability } from "./availability.js";
 
 // ─── DOM refs ────────────────────────────────────────────────────────────────
 const pages           = { "/": document.querySelector('[data-page="home"]'), "/admin": document.querySelector('[data-page="admin"]') };
@@ -8,27 +13,7 @@ const siteFooter      = document.querySelector(".footer");
 const mobileCta       = document.querySelector(".mobile-cta");
 const navLinks        = document.querySelectorAll("[data-route]");
 
-// booking form
-const bookingForm         = document.querySelector("#bookingForm");
-const bookingStatus       = document.querySelector("#bookingStatus");
-const packageSelect       = document.querySelector("#packageSelect");
-const packagePrice        = document.querySelector("#packagePrice");
-const payableAmountInput  = document.querySelector("#payableAmountInput");
-const bookingModal        = document.querySelector("#bookingModal");
-const closeBooking        = document.querySelector("#closeBooking");
-const selectedPackageName = document.querySelector("#selectedPackageName");
-const selectedPackagePrice= document.querySelector("#selectedPackagePrice");
-const payableAmount       = document.querySelector("#payableAmount");
-const firebaseAlert       = document.querySelector("#firebaseAlert");
-const bookingSubmitBtn    = bookingForm?.querySelector('button[type="submit"]');
-const bookingDateInput    = bookingForm?.querySelector('input[name="date"]');
-
 // admin dashboard
-const bookingRows   = document.querySelector("#bookingRows");
-const totalBookings = document.querySelector("#totalBookings");
-const todayBookings = document.querySelector("#todayBookings");
-const adminStatus   = document.querySelector("#adminStatus");
-const bookingSearch = document.querySelector("#bookingSearch");
 const adminLogout   = document.querySelector("#adminLogout");
 const adminTopbarArea  = document.querySelector("#adminTopbarArea");
 const adminTopbarEmail = document.querySelector("#adminTopbarEmail");
@@ -42,10 +27,14 @@ const adminLoginStatus   = document.querySelector("#adminLoginStatus");
 
 // ─── State ───────────────────────────────────────────────────────────────────
 let firebaseApp, firebaseModules;
-let unsubscribeBookings = null;
-let latestBookings = [];
-let lastBookingTrigger;
+let dashboard = null;         // the admin dashboard (created once, started/stopped per session)
+let dashboardRunning = false;
+let dashboardAuth = null;     // { fb, auth } of the current admin session
+let authUnsubscribe = null;   // onAuthStateChanged listener (admin route only)
+let adminCheckId = 0;         // invalidates in-flight admin checks that became stale
+let pendingLoginMessage = null; // message to show once the sign-out below completes
 const FB_TIMEOUT = 15000;
+const ADMIN_CHECK_TIMEOUT = 30000; // allows for a cold-starting API host
 
 // ─── Router ──────────────────────────────────────────────────────────────────
 function routeFromLocation() {
@@ -65,15 +54,13 @@ function renderRoute(path = routeFromLocation()) {
   mobileCta?.toggleAttribute("hidden", isAdmin);
 
   if (isAdmin) {
-    showLoginOverlay("Enter your credentials to access the dashboard");
-    // Pre-fill email for convenience
-    if (adminEmailInput && !adminEmailInput.value) {
-      adminEmailInput.value = ADMIN_EMAIL;
-    }
+    showLoginOverlay("Checking session…");
+    startAdminSession();
   } else {
+    stopAdminSession();
     hideLoginOverlay();
     hideAdminTopbar();
-    stopWatchingBookings();
+    stopDashboard();
   }
 }
 
@@ -94,8 +81,9 @@ navLinks.forEach(link => {
 
 window.addEventListener("popstate", () => renderRoute());
 renderRoute();
-setMinimumBookingDate();
-renderFirebaseNotice();
+
+// Booking modal (catalog-driven prices, POST /api/bookings). Owns all booking DOM.
+const { openBooking, setLastTrigger } = initBookingModal({ selectedCardSelector: ".occasion-card" });
 
 // ─── Hamburger / dropdown navigation ──────────────────────────────────────────
 const hamburgerBtn = document.querySelector("#hamburgerBtn");
@@ -160,8 +148,8 @@ document.querySelectorAll(".nav-dropdown a").forEach(link => {
 document.querySelectorAll(".mnav-quick-thumb[data-package]").forEach(link => {
   link.addEventListener("click", e => {
     e.preventDefault();
-    lastBookingTrigger = link;
-    openBooking(link.dataset.package, Number(link.dataset.price || 999));
+    setLastTrigger(link);
+    openBooking(link.dataset.packageId);
     closeMobileNav();
     navItems.forEach(item => closeDropdown(item));
   });
@@ -173,19 +161,13 @@ window.addEventListener("resize", () => {
   }
 });
 
-// ─── Booking triggers ─────────────────────────────────────────────────────────
-document.querySelectorAll("[data-open-booking]").forEach(btn => {
-  btn.addEventListener("click", () => {
-    lastBookingTrigger = btn;
-    openBooking(btn.dataset.package || "Birthday Decoration", Number(btn.dataset.price || 999));
-  });
-});
-
+// ─── Package cards ────────────────────────────────────────────────────────────
+// (Buttons with [data-open-booking] are wired inside bookingModal.js.)
 document.querySelectorAll(".package-card").forEach(card => {
   card.addEventListener("click", e => {
     if (e.target.closest("button")) return;
     const btn = card.querySelector("[data-open-booking]");
-    if (btn) openBooking(btn.dataset.package || "Birthday Decoration", Number(btn.dataset.price || 999));
+    if (btn) openBooking(btn.dataset.packageId);
   });
 });
 
@@ -197,47 +179,6 @@ document.querySelectorAll("[data-filter]").forEach(btn => {
   });
 });
 
-document.querySelectorAll('input[name="paymentType"]').forEach(i => i.addEventListener("change", updatePayableAmount));
-closeBooking?.addEventListener("click", closeBookingModal);
-bookingModal?.addEventListener("click", e => { if (e.target === bookingModal) closeBookingModal(); });
-window.addEventListener("keydown", e => { if (e.key === "Escape") closeBookingModal(); });
-
-// ─── Booking modal ────────────────────────────────────────────────────────────
-function openBooking(packageName, price) {
-  packageSelect.value = packageName;
-  packagePrice.value  = String(price);
-  selectedPackageName.textContent  = packageName;
-  selectedPackagePrice.textContent = formatMoney(price);
-  document.querySelectorAll(".occasion-card").forEach(c => c.classList.toggle("selected", c.dataset.package === packageName));
-  updatePayableAmount();
-  bookingModal.classList.add("open");
-  bookingModal.setAttribute("aria-hidden", "false");
-  document.body.classList.add("modal-open");
-  bookingForm.querySelector("input[name='name']").focus();
-}
-
-function closeBookingModal() {
-  bookingModal?.classList.remove("open");
-  bookingModal?.setAttribute("aria-hidden", "true");
-  document.body.classList.remove("modal-open");
-  lastBookingTrigger?.focus?.();
-}
-
-function updatePayableAmount() {
-  const price = Number(packagePrice.value || 0);
-  const type  = bookingForm.querySelector('input[name="paymentType"]:checked')?.value || "Advance";
-  const amt   = type === "Full Payment" ? price : Math.min(500, price);
-  payableAmount.textContent    = `Payable now: ${formatMoney(amt)}`;
-  payableAmountInput.value     = String(amt);
-}
-
-function setMinimumBookingDate() {
-  if (!bookingDateInput) return;
-  const t = new Date();
-  t.setMinutes(t.getMinutes() - t.getTimezoneOffset());
-  bookingDateInput.min = t.toISOString().slice(0, 10);
-}
-
 // ─── Firebase init ────────────────────────────────────────────────────────────
 function hasFirebaseConfig() {
   return ["apiKey","authDomain","projectId","messagingSenderId","appId"].every(k => {
@@ -246,76 +187,25 @@ function hasFirebaseConfig() {
   });
 }
 
-function renderFirebaseNotice() {
-  if (!firebaseAlert) return;
-  if (hasFirebaseConfig()) {
-    firebaseAlert.textContent = "✓ Firebase connected — bookings save to Firestore.";
-    firebaseAlert.classList.add("ready");
-  } else {
-    firebaseAlert.textContent = "⚠ Firebase config incomplete. Add apiKey, messagingSenderId and appId.";
-  }
-}
-
 async function getFirebase() {
   if (!hasFirebaseConfig()) return null;
   if (firebaseApp && firebaseModules) return { app: firebaseApp, ...firebaseModules };
 
-  const [appMod, fsMod, authMod] = await Promise.all([
+  // Auth only. The admin dashboard uses the backend API, never Firestore, and the
+  // security rules would refuse a browser's Firestore reads of bookings anyway.
+  const [appMod, authMod] = await Promise.all([
     import("https://www.gstatic.com/firebasejs/10.12.5/firebase-app.js"),
-    import("https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore.js"),
     import("https://www.gstatic.com/firebasejs/10.12.5/firebase-auth.js"),
   ]);
 
   firebaseApp     = appMod.initializeApp(firebaseConfig);
-  firebaseModules = { ...fsMod, ...authMod };
+  firebaseModules = { ...authMod };
   return { app: firebaseApp, ...firebaseModules };
 }
 
 function withTimeout(p, msg, ms = FB_TIMEOUT) {
   return Promise.race([p, new Promise((_, r) => setTimeout(() => r(new Error(msg)), ms))]);
 }
-
-// ─── Submit booking → Firestore ───────────────────────────────────────────────
-bookingForm?.addEventListener("submit", async e => {
-  e.preventDefault();
-  bookingStatus.textContent = "";
-  bookingSubmitBtn.disabled = true;
-  bookingSubmitBtn.textContent = "Saving…";
-
-  const data = Object.fromEntries(new FormData(bookingForm));
-
-  try {
-    const fb = await withTimeout(getFirebase(), "Firebase SDK did not load. Check your internet and try again.");
-
-    if (!fb) {
-      saveLocalBooking(data);
-      bookingStatus.textContent = "⚠ Saved locally (Firebase not configured).";
-      bookingForm.reset();
-      return;
-    }
-
-    const db = fb.getFirestore(firebaseApp);
-    await fb.addDoc(fb.collection(db, "bookings"), {
-      ...data,
-      createdAt: fb.serverTimestamp(),
-      status: "Pending"
-    });
-
-    bookingStatus.textContent = "✅ Booking submitted! Admin will confirm your slot soon.";
-    bookingStatus.style.color = "#0f6b37";
-    bookingForm.reset();
-    setTimeout(() => closeBookingModal(), 2200);
-
-  } catch (err) {
-    console.error(err);
-    saveLocalBooking(data);
-    bookingStatus.textContent = "⚠ " + friendlyError(err);
-    bookingStatus.style.color = "#d91f52";
-  } finally {
-    bookingSubmitBtn.disabled = false;
-    bookingSubmitBtn.textContent = "Submit Booking";
-  }
-});
 
 // ─── Admin login (Email / Password via Firebase Auth) ─────────────────────────
 adminLoginBtn?.addEventListener("click", async () => {
@@ -334,23 +224,11 @@ adminLoginBtn?.addEventListener("click", async () => {
     const fb = await withTimeout(getFirebase(), "Firebase did not load. Check your internet.");
     if (!fb) { setLoginStatus("Firebase config missing.", true); return; }
 
-    const auth = fb.getAuth(firebaseApp);
+    attachAuthListener(fb);
 
-    // Sign in with email + password
-    const cred = await fb.signInWithEmailAndPassword(auth, email, password);
-    const user = cred.user;
-
-    // Check it's the authorised admin email
-    if (user.email.toLowerCase() !== ADMIN_EMAIL.toLowerCase()) {
-      await fb.signOut(auth);
-      setLoginStatus(`Access denied for ${user.email}.`, true);
-      return;
-    }
-
-    // ✅ Authorised — enter dashboard
-    hideLoginOverlay();
-    showAdminTopbar(user.email);
-    loadBookings(fb);
+    // Sign-in only. Whether this account is an admin is decided by the API from
+    // the verified ID token (see handleAuthState), never by comparing emails here.
+    await fb.signInWithEmailAndPassword(fb.getAuth(firebaseApp), email, password);
 
   } catch (err) {
     console.error(err);
@@ -366,105 +244,124 @@ adminEmailInput?.addEventListener("keydown", e => { if (e.key === "Enter") admin
 
 // ─── Admin logout ─────────────────────────────────────────────────────────────
 adminLogout?.addEventListener("click", async () => {
+  pendingLoginMessage = { text: "You have been logged out." };
   try {
     const fb = await getFirebase();
     if (fb) await fb.signOut(fb.getAuth(firebaseApp));
   } catch(e) { console.warn(e); }
-  stopWatchingBookings();
-  latestBookings = [];
-  renderBookings([]);
+  stopDashboard();
   hideAdminTopbar();
   showLoginOverlay("You have been logged out.");
-  if (adminEmailInput) adminEmailInput.value = ADMIN_EMAIL;
 });
 
-bookingSearch?.addEventListener("input", () => renderBookings(latestBookings));
-
-// ─── Load & watch bookings from Firestore (real-time) ─────────────────────────
-function loadBookings(fb) {
-  adminStatus.textContent = "Connecting…";
-  adminStatus.style.color = "#686a75";
-  const db = fb.getFirestore(firebaseApp);
-
-  const q = fb.query(
-    fb.collection(db, "bookings"),
-    fb.orderBy("createdAt", "desc")
-  );
-
-  unsubscribeBookings = fb.onSnapshot(
-    q,
-    snapshot => {
-      latestBookings = snapshot.docs.map(d => ({ id: d.id, ...d.data() }));
-      adminStatus.textContent = "● Live";
-      adminStatus.style.color = "#0f6b37";
-      renderBookings(latestBookings);
-    },
-    err => {
-      console.error(err);
-      adminStatus.textContent = "Error loading";
-      adminStatus.style.color = "#d91f52";
-      bookingRows.innerHTML = `<tr><td colspan="9" style="color:#d91f52;padding:20px;">${escHtml(friendlyError(err))}</td></tr>`;
-    }
-  );
+// ─── Admin session (Firebase Auth state + server-side authorization) ──────────
+// The browser only proves *who* the user is (Firebase sign-in). Whether they are
+// an admin is decided by the API, which verifies the ID token and its `admin`
+// custom claim. Firestore rules enforce the same claim on reads.
+async function startAdminSession() {
+  try {
+    const fb = await withTimeout(getFirebase(), "Firebase did not load. Check your internet.");
+    if (!fb) { setLoginStatus("Firebase config missing.", true); return; }
+    // The user may have navigated away while the SDK was loading.
+    if (routeFromLocation() !== "/admin") return;
+    attachAuthListener(fb);
+  } catch (err) {
+    console.error(err);
+    setLoginStatus(friendlyError(err), true);
+  }
 }
 
-function stopWatchingBookings() {
-  if (unsubscribeBookings) { unsubscribeBookings(); unsubscribeBookings = null; }
+function attachAuthListener(fb) {
+  if (authUnsubscribe) return;
+  authUnsubscribe = fb.onAuthStateChanged(fb.getAuth(firebaseApp), user => handleAuthState(fb, user));
 }
 
-// ─── Render booking table ─────────────────────────────────────────────────────
-function renderBookings(bookings) {
-  const q = bookingSearch?.value.trim().toLowerCase() || "";
-  const list = q ? bookings.filter(b => bookingMatchesSearch(b, q)) : bookings;
+function stopAdminSession() {
+  adminCheckId++;
+  if (authUnsubscribe) { authUnsubscribe(); authUnsubscribe = null; }
+}
 
-  totalBookings.textContent = bookings.length;
-  const today = new Date().toISOString().slice(0, 10);
-  todayBookings.textContent = bookings.filter(b => b.date === today).length;
+async function handleAuthState(fb, user) {
+  const checkId = ++adminCheckId;
 
-  if (!list.length) {
-    bookingRows.innerHTML = `<tr><td colspan="9" style="padding:30px;text-align:center;color:#686a75;">${bookings.length ? "No bookings match your search." : "No bookings yet."}</td></tr>`;
+  if (!user) {
+    stopDashboard();
+    hideAdminTopbar();
+    const msg = pendingLoginMessage;
+    pendingLoginMessage = null;
+    showLoginOverlay(msg?.text || "Enter your credentials to access the dashboard", !!msg?.isError);
     return;
   }
 
-  bookingRows.innerHTML = list.map(b => {
-    const createdAt = b.createdAt?.toDate?.()
-      ? b.createdAt.toDate().toLocaleString("en-IN", { day:"2-digit", month:"short", year:"numeric", hour:"2-digit", minute:"2-digit" })
-      : "—";
-    const statusBadge = statusBadgeHtml(b.status || "Pending");
-    return `
-    <tr>
-      <td><strong>${escHtml(b.name || "Guest")}</strong><br/><small style="color:#686a75;">${escHtml(b.email || "—")}</small></td>
-      <td><a href="tel:${escHtml(b.phone || "")}">${escHtml(b.phone || "—")}</a></td>
-      <td><strong>${escHtml(b.package || "Custom")}</strong><br/><small>${formatMoney(b.packagePrice)}</small></td>
-      <td><strong>${escHtml(b.paymentType || "—")}</strong><br/><small>${formatMoney(b.payableAmount)} via ${escHtml(b.paymentMethod || "—")}</small></td>
-      <td>${escHtml(b.date || "—")}<br/><small>${escHtml(b.time || "")}</small></td>
-      <td>${escHtml(b.balloonColor || "—")}</td>
-      <td>${escHtml(b.address || "—")}</td>
-      <td>${escHtml(b.notes || "—")}</td>
-      <td>${statusBadge}<br/><small style="color:#686a75;font-size:11px;">${createdAt}</small></td>
-    </tr>`;
-  }).join("");
+  setLoginStatus("Verifying admin access…");
+  const auth = fb.getAuth(firebaseApp);
+  try {
+    // Force a refresh so a newly granted or revoked admin claim is picked up.
+    const idToken = await user.getIdToken(true);
+    const me = await fetchAdminProfile(API_BASE_URL, idToken, { timeoutMs: ADMIN_CHECK_TIMEOUT });
+    if (checkId !== adminCheckId) return; // superseded by a newer auth event
+
+    hideLoginOverlay();
+    showAdminTopbar(me.email || user.email);
+    startDashboard(fb);
+  } catch (err) {
+    if (checkId !== adminCheckId) return;
+    console.error(err);
+    if (err.code === "not-admin" || err.code === "unauthorized") {
+      pendingLoginMessage = {
+        text: err.code === "not-admin"
+          ? "Access denied. This account is not an administrator."
+          : "Your session is invalid or expired. Please sign in again.",
+        isError: true
+      };
+      await fb.signOut(auth); // triggers handleAuthState(null), which shows the message
+    } else {
+      // API unreachable/misconfigured: fail closed. Do not show the dashboard.
+      stopDashboard();
+      hideAdminTopbar();
+      showLoginOverlay("Could not verify admin access right now. Please try again.", true);
+    }
+  }
 }
 
-function statusBadgeHtml(status) {
-  const colors = {
-    "Pending":   { bg: "#fff7e6", text: "#b45309" },
-    "Confirmed": { bg: "#ecfdf5", text: "#0f6b37" },
-    "Cancelled": { bg: "#fef2f2", text: "#b91c1c" },
-  };
-  const c = colors[status] || { bg: "#f3f4f6", text: "#374151" };
-  return `<span style="display:inline-block;padding:2px 8px;border-radius:20px;font-size:11px;font-weight:700;background:${c.bg};color:${c.text};">${escHtml(status)}</span>`;
+// ─── Admin dashboard (API-driven: it never reads Firestore) ────────────────────
+// Bookings, packages and slots are loaded one bounded page at a time from /api/admin/*, and
+// every change is an API call the SERVER authorises (verified ID token + admin claim) and audits.
+function startDashboard(fb) {
+  dashboardAuth = { fb, auth: fb.getAuth(firebaseApp) };
+  if (dashboardRunning) return;
+  dashboardRunning = true;
+
+  // Created once: it attaches its event listeners a single time.
+  dashboard ??= initAdminDashboard({
+    api: createAdminApi({
+      baseUrl: API_BASE_URL,
+      // Always the CURRENT user's token (refreshed by Firebase when needed).
+      getIdToken: async () => {
+        const user = dashboardAuth?.auth.currentUser;
+        if (!user) throw new Error("signed out");
+        return user.getIdToken();
+      }
+    }),
+    loadAvailability: date => loadAvailability(API_BASE_URL, date),
+    onUnauthorized: () => {
+      pendingLoginMessage = { text: "Your session is invalid or expired. Please sign in again.", isError: true };
+      dashboardAuth?.fb.signOut(dashboardAuth.auth).catch(e => console.warn(e));
+    }
+  });
+  dashboard.start();
 }
 
-function bookingMatchesSearch(b, q) {
-  return [b.name, b.phone, b.email, b.package, b.occasion, b.balloonColor, b.address, b.notes, b.date]
-    .some(v => String(v || "").toLowerCase().includes(q));
+function stopDashboard() {
+  if (!dashboardRunning) return;
+  dashboardRunning = false;
+  dashboard?.stop();
 }
 
 // ─── Login overlay helpers ────────────────────────────────────────────────────
-function showLoginOverlay(msg = "") {
+function showLoginOverlay(msg = "", isError = false) {
   adminLoginOverlay?.classList.add("visible");
-  setLoginStatus(msg, false);
+  setLoginStatus(msg, isError);
   if (adminPasswordInput) adminPasswordInput.value = "";
 }
 
@@ -487,25 +384,7 @@ function hideAdminTopbar() {
   if (adminTopbarArea) adminTopbarArea.style.display = "none";
 }
 
-// ─── Local fallback ───────────────────────────────────────────────────────────
-function saveLocalBooking(data) {
-  try {
-    const key = "decorMySpaceBookings";
-    const arr = JSON.parse(localStorage.getItem(key) || "[]");
-    arr.unshift({ ...data, id: crypto.randomUUID?.() || String(Date.now()), createdAt: new Date().toISOString() });
-    localStorage.setItem(key, JSON.stringify(arr.slice(0, 50)));
-  } catch(e) { console.warn("localStorage failed", e); }
-}
-
 // ─── Utilities ────────────────────────────────────────────────────────────────
-function formatMoney(n) { return `Rs. ${Number(n || 0).toLocaleString("en-IN")}`; }
-
-function escHtml(v) {
-  return String(v)
-    .replaceAll("&","&amp;").replaceAll("<","&lt;")
-    .replaceAll(">","&gt;").replaceAll('"',"&quot;").replaceAll("'","&#039;");
-}
-
 function friendlyError(err) {
   const m = err?.message || String(err);
   if (m.includes("auth/wrong-password") || m.includes("auth/invalid-credential"))

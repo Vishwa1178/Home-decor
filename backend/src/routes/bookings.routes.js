@@ -3,15 +3,18 @@
 const { Router } = require("express");
 const asyncHandler = require("../utils/asyncHandler");
 const bookingsController = require("../controllers/bookings.controller");
+const catalogController = require("../controllers/catalog.controller");
+const { bookingLimiter, catalogLimiter } = require("../middleware/rateLimit");
 
 const router = Router();
 
-// Metadata endpoint kept server-side so the frontend can fetch package
-// definitions without depending on hard-coded client data.
-router.get("/packages", asyncHandler(bookingsController.listPackages));
+// Create a booking (idempotent on `requestId`). The only way bookings are written.
+router.post("/", bookingLimiter, asyncHandler(bookingsController.createBooking));
 
-// Lightweight validation endpoint used by the booking form before it
-// writes to Firestore from the client SDK.
-router.post("/validate", asyncHandler(bookingsController.validateBooking));
+// Dry run: same validation and pricing as POST /, writes nothing.
+router.post("/validate", bookingLimiter, asyncHandler(bookingsController.validateBooking));
+
+// Kept for compatibility: same response as GET /api/packages (the one catalog).
+router.get("/packages", catalogLimiter, asyncHandler(catalogController.listPackages));
 
 module.exports = router;
